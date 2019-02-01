@@ -6,7 +6,7 @@
 /*   By: mnishimo <mnishimo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/31 22:08:26 by mnishimo          #+#    #+#             */
-/*   Updated: 2019/01/31 22:31:10 by mnishimo         ###   ########.fr       */
+/*   Updated: 2019/02/01 18:48:54 by mnishimo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,14 +18,22 @@ int	get_output(t_list **files, t_lsflags *flags, char **output)
 	return (1);	
 }
 
-int	prcs_f_flag(DIR *dirp)
+int	prcs_f_flag(char *path, DIR *dirp, t_lsflags *flags, char **output)
 {
 	struct dirent	*dp;
+	struct stat		statbuff;
+	char			*tmp;
 
-	while ((dp = readdir(dirp)) != NULL)
+	if (path == NULL)
 	{
-		//TODO
-		ft_printf("entry: %s\n", dp->d_name);
+		closedir(dirp);
+		return (-1);
+	}
+	while ((dp = readdir(dirp)) != NULL && lstat(dp->d_name, &statbuff) == 0)
+	{
+		//read stat and check if it is dir or link
+		//depending all of these print all of them
+		add_output(dp->d_name, &statbuff, flags);
 	}
 	closedir(dirp);
 	return (0);

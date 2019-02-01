@@ -6,7 +6,7 @@
 /*   By: mnishimo <mnishimo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/31 13:45:28 by mnishimo          #+#    #+#             */
-/*   Updated: 2019/01/31 22:27:14 by mnishimo         ###   ########.fr       */
+/*   Updated: 2019/02/01 19:21:01 by mnishimo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,8 @@ int	manage_path(char **path, t_lsflags *flags, char **output)
 		return ((search_file(flags, *path, output)) ? -1 : 0);
 	if ((dp = skip_hid_files(dirp, flags->a)) == NULL)
 		return (0);
-	if (flags->f == 'f')
-		return (prcs_f_flag(dirp));
+	if (flags->f == 'f' && flags->cr != 'R')
+		return (prcs_f_flag(*path, dirp, flags, output));
 	//store_dp(dirp, &files);
 	//sort_files(&files, flags);
 	//get_output(files, flags, output);

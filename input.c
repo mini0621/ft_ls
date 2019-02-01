@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   inoutput.c                                         :+:      :+:    :+:   */
+/*   input.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mnishimo <mnishimo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/31 14:11:16 by mnishimo          #+#    #+#             */
-/*   Updated: 2019/01/31 21:56:16 by mnishimo         ###   ########.fr       */
+/*   Updated: 2019/02/01 17:48:09 by mnishimo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,12 @@ char	read_input(t_lsflags *flags, t_list **path, int argc, char **argv)
 			j++;
 		}
 		i++;
+	}
+	if (i == argc)
+	{
+		if ((new = ft_lstnew(ft_strdup("."), sizeof(char *))) == NULL)
+			return ('\0');
+		ft_lstpushback(path, new);
 	}
 	while (i < argc)
 	{
@@ -75,23 +81,4 @@ char solve_flagconf(t_lsflags *flags)
 	if (flags->f == 'f')
 		flags->a = 'a';
 	return ('\0');
-}
-
-int	print_error(char *message, char *ver, char usage)
-{
-	if (ver == NULL || message == NULL)
-		return (0);
-	ft_printf(message, ver);
-	if (usage == 'y')
-		ft_printf("usage: ft_ls [-Radflrtu1] [file ...]");
-	return (0);
-}
-
-int	print_output(char **output)
-{
-	if (output == NULL || *output == NULL)
-		return (0);
-	ft_printf(*output);
-	ft_strdel(output);
-	return (0);
 }
