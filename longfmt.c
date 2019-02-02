@@ -6,13 +6,13 @@
 /*   By: mnishimo <mnishimo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/01 18:20:25 by mnishimo          #+#    #+#             */
-/*   Updated: 2019/02/02 19:07:38 by mnishimo         ###   ########.fr       */
+/*   Updated: 2019/02/02 21:08:18 by mnishimo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_ls.h"
 
-int	prcs_files(char *path, t_list *files, t_lsflags *flags, char **output)
+void	prcs_files_l(char *path, t_list **files, t_lsflags *flags, char **output)
 {
 	t_fmt	fmt;
 	t_list	*cur;
@@ -20,24 +20,23 @@ int	prcs_files(char *path, t_list *files, t_lsflags *flags, char **output)
 	struct stat	stat;
 
 	if (files == NULL || *files == NULL)
-		return (0);
+		return ;
 	//get name width
-	fmt = get_fmt_name();
+	get_fmt(*files, flags, &fmt);
 	cur = *files;
 	tpath = add_path(path, (char *)(cur->content));
-	while (cur != NULL && tpath && lstat(tpath, &sttbuff) == 0)
+	while (cur != NULL && tpath && lstat(tpath, &stat) == 0)
 	{
 		if ((stat.st_mode & S_IFMT) == S_IFDIR)
-			fmt_dir(d_name, stat, flags);
+			fmt_dir((char *)(cur->content), &stat, flags);
 		else if ((stat.st_mode & S_IFMT) == S_IFLNK)
-			fmt_lnk(path, d_name, stat, flags);
+			fmt_lnk(path, (char *)(cur->content), &stat, flags);
 		else if ((stat.st_mode & S_IFMT) == S_IFREG)
-			fmt_reg(d_name, stat, flags);
+			fmt_reg((char *)(cur->content), &stat, flags);
 		cur = cur->next;
 		ft_strdel(tpath);
 		tpath = add_path(path, (char *)(cur->content));
 	}
-	return(0);
 }
 
 //TODO

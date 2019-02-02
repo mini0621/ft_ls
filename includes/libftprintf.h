@@ -6,7 +6,7 @@
 /*   By: mnishimo <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/12/13 17:55:20 by mnishimo          #+#    #+#             */
-/*   Updated: 2019/01/31 14:59:34 by mnishimo         ###   ########.fr       */
+/*   Updated: 2019/02/02 21:02:22 by mnishimo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,6 +94,7 @@ int					ft_power(int base, int power);
 t_list				*ft_lstlast(t_list *alst);
 int					ft_lstlen(t_list *alst);
 t_list				*ft_lstat(t_list *alst, unsigned int nbr);
+t_list				*ft_lstsub(t_list *before, t_list **cur);
 void				ft_lstpushback(t_list **alst, t_list *new);
 void				ft_lstdelof(t_list **alst, void *content,
 		int (*cmp)(void *, void *));

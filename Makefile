@@ -12,7 +12,7 @@ LIB = -lftprintf
 
 DEPS =
 
-SRC = ft_ls.c input.c output.c list.c prcs_first_dir.c formatting.c path_string.c
+SRC = ft_ls.c input.c output.c list.c prcs_first_dir.c formatting.c path_string.c prcs_dir.c longfmt.c
 OBJ = $(SRC:.c=.o)
 
 

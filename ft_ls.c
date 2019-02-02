@@ -6,7 +6,7 @@
 /*   By: mnishimo <mnishimo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/31 13:45:28 by mnishimo          #+#    #+#             */
-/*   Updated: 2019/02/01 22:23:12 by mnishimo         ###   ########.fr       */
+/*   Updated: 2019/02/02 20:51:43 by mnishimo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,16 +15,16 @@
 int	manage_path(char **path, t_lsflags *flags, char **output)
 {
 	DIR				*dirp;
-	t_list			*fils;
+	t_list			*files;
 	struct dirent	*dp;
 
 	if (flags->d == 'd' || (dirp = opendir(*path)) == NULL)
 		return ((search_file(flags, *path, output)) ? -1 : 0);
 	if ((dp = skip_hid_files(dirp, flags->a)) == NULL)
 		return (0);
-	store_dp(*path, dirp, flags, output);
+	store_dp(dirp, &files);
 	//sort_files(&files, flags);
-	get_output(files, flags, output);
+	get_output(*path, &files, flags, output);
 	ft_lstdel(&files, &ft_ldel);
 	closedir(dirp);
 	return (0);
