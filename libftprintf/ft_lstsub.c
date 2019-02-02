@@ -1,16 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   formatting.c                                       :+:      :+:    :+:   */
+/*   ft_lstsub.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mnishimo <mnishimo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/02/02 19:01:40 by mnishimo          #+#    #+#             */
-/*   Updated: 2019/02/02 19:13:57 by mnishimo         ###   ########.fr       */
+/*   Created: 2019/02/02 17:43:30 by mnishimo          #+#    #+#             */
+/*   Updated: 2019/02/02 18:34:05 by mnishimo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ft_ls.h"
+#include "libftprintf.h"
 
-get_fmt(t_list	*files, t_lsflags *flags)
-{}
+t_list	*ft_lstsub(t_list *before, t_list **cur)
+{
+	t_list	*ptr;
+
+	if (!cur || *cur == NULL)
+		return (NULL);
+	before->next = (*cur)->next;
+	(*cur)->next = NULL;
+	ptr = *cur;
+	*cur = before;
+	ptr->next = NULL;
+	return (ptr);
+}

@@ -6,34 +6,32 @@
 /*   By: mnishimo <mnishimo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/31 22:08:26 by mnishimo          #+#    #+#             */
-/*   Updated: 2019/02/01 18:48:54 by mnishimo         ###   ########.fr       */
+/*   Updated: 2019/02/02 17:34:43 by mnishimo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_ls.h"
 
-int	get_output(t_list **files, t_lsflags *flags, char **output)
-{
-	//TODO
-	return (1);	
-}
-
-int	prcs_f_flag(char *path, DIR *dirp, t_lsflags *flags, char **output)
+int	store_dpstat(char *path, DIR *dirp, t_list **files)
 {
 	struct dirent	*dp;
 	struct stat		statbuff;
 	char			*tmp;
+	t_list			*new;
+	t_file			*file;
 
 	if (path == NULL)
 	{
 		closedir(dirp);
 		return (-1);
 	}
-	while ((dp = readdir(dirp)) != NULL && lstat(dp->d_name, &statbuff) == 0)
+	while ((dp = readdir(dirp)) != NULL
+			&& lstat((tmp = add_path(path, dp->d_name), &statbuff)) == 0)
 	{
-		//read stat and check if it is dir or link
-		//depending all of these print all of them
-		add_output(dp->d_name, &statbuff, flags);
+		if ((new = ft_lstnew(, sizeof(t_file *))))
+			return (-1);
+		ft_lstadd(files, new);
+		add_output(path, dp->d_name, &statbuff, flags);
 	}
 	closedir(dirp);
 	return (0);
@@ -47,7 +45,8 @@ int	store_dp(DIR *dirp, t_list **files)
 
 	while ((dp = readdir(dirp)) != NULL)
 	{
-		if ((new = ft_lstnew(dp, sizeof(struct dirent *))))
+		
+		if ((new = ft_lstnew(dp->d_name, sizeof(char *))))
 			return (-1);
 		ft_lstadd(files, new);
 	}

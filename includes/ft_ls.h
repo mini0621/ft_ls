@@ -6,7 +6,7 @@
 /*   By: mnishimo <mnishimo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/30 22:43:07 by mnishimo          #+#    #+#             */
-/*   Updated: 2019/02/01 19:20:59 by mnishimo         ###   ########.fr       */
+/*   Updated: 2019/02/01 22:23:15 by mnishimo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,11 @@
 # include <sys/ioctl.h>
 # include <sys/stat.h>
 # include <dirent.h>
+# include <grp.h>
+# include <pwd.h>
+# include <uuid/uuid.h>
+# include <sys/xattr.h>
+# include <time.h>
 # include <string.h>
 # include "libftprintf.h"
 
@@ -33,9 +38,18 @@ typedef struct	s_lsflags
 	char	n1;
 }				t_lsflags;
 
+typedef struct	s_fmt
+{
+	int link;
+	int	user;
+	int group;
+	int	size;
+	int	name;
+}				t_fmt;
+
 typedef struct	s_file
 {
-	struct dirent	*dp;
+	char			*d_name;
 	struct stat		*stat;
 }				t_file;
 
@@ -51,11 +65,11 @@ char			read_input(t_lsflags *flags, t_list **path, int argc, char **argv);
 
 char			*add_path(char *path, char *name);
 
-int				add_output(char	*d_name, struct stat *stat, t_lsflags *flags);
+int				add_output(char *path, char *d_name, struct stat *stat, t_lsflags *flags);
 void	fmt_dir(char *d_name, struct stat *stat, t_lsflags *flags);
-void	fmt_lnk(char *d_name, struct stat *stat, t_lsflags *flags);
+void	fmt_lnk(char *path, char *d_name, struct stat *stat, t_lsflags *flags);
 void	fmt_reg(char *d_name, struct stat *stat, t_lsflags *flags);
-
+char	*fmt_attr(mode_t mode, char type);
 int				print_output(char **output);
 int				print_error(char *message, char *ver, char usage);
 
