@@ -6,7 +6,7 @@
 /*   By: mnishimo <mnishimo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/01 17:54:05 by mnishimo          #+#    #+#             */
-/*   Updated: 2019/02/01 18:43:30 by mnishimo         ###   ########.fr       */
+/*   Updated: 2019/02/04 21:25:32 by mnishimo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,10 @@ char	*add_path(char *path, char *name)
 	char	*ret;
 	size_t	len;
 
-	if (path == NULL || name == NULL)
+	if (name == NULL)
 		return (NULL);
+	if (path == NULL)
+		return (ft_strdup(name));
 	len = ft_strlen(path);
 	if ((ret = (char *)malloc(len + ft_strlen(name) + 2)) == NULL)
 		return (NULL);

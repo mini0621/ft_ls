@@ -6,7 +6,7 @@
 /*   By: mnishimo <mnishimo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/31 14:11:16 by mnishimo          #+#    #+#             */
-/*   Updated: 2019/02/04 17:39:28 by mnishimo         ###   ########.fr       */
+/*   Updated: 2019/02/04 23:22:18 by mnishimo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ int	print_error(char *message, char *ver, char usage)
 		return (0);
 	ft_printf(message, ver);
 	if (usage == 'y')
-		ft_printf("usage: ft_ls [-Radflrtu1] [file ...]");
+		ft_printf("usage: ft_ls [-Radflrtu1] [file ...]\n");
 	return (0);
 }
 

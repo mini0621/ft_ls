@@ -6,7 +6,7 @@
 /*   By: mnishimo <mnishimo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/31 14:11:16 by mnishimo          #+#    #+#             */
-/*   Updated: 2019/02/04 19:20:58 by mnishimo         ###   ########.fr       */
+/*   Updated: 2019/02/04 23:36:33 by mnishimo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,45 +32,41 @@ char	read_input(t_lsflags *flags, t_list **path, int argc, char **argv)
 		}
 		i++;
 	}
-	while (i < argc && (new = ft_lstnew(argv[i], ft_strlen(argv[i]))) != NULL)
+	if (i == argc)
+		return (solve_flagconf(flags));
+	while (i < argc && (new = ft_lstnew(argv[i], ft_strlen(argv[i]) + 1)) != NULL)
 	{
 		ft_lstpushback(path, new);
 		i++;
 	}
-	if (flags->cr == 'R')
-		sort_input(path);
+	validate_input(path);
 	return (solve_flagconf(flags));
 }
 
-void	sort_input(t_list **path)
+void	validate_input(t_list **path)
 {
 	t_list	*cur;
-	t_list	*last;
-	t_list	*tmp;
 	t_list	*pre;
+	struct stat	stat;
 
 	if (*path == NULL)
 		return ;
-	tmp = *path;
-	while (tmp->next != NULL)
-		tmp = tmp->next;
-	while (cur != tmp)
+	cur = *path;
+	while (cur != NULL)
 	{
-		if (opendir((char *)(cur->next->content)) != NULL)
+		if (lstat((char *)(cur->content), &stat) != 0)
 		{
-			last = tmp;
-			while (last->next != NULL)
-				last = last->next;
-			pre = *path;
-			while (pre->next != cur)
-				pre = pre->next;
-			last->next = cur;
-			pre->next = cur->next;
-			cur->next = NULL;
+			if (cur == *path)
+				*path = cur->next;
+			else
+				pre->next = cur->next;
+			print_error("ft_ls: %s: No such file or directory\n", (char *)cur->content, 'n');
+			free(cur->content);
+			free(cur);
 		}
-		cur = pre->next;
+		pre = cur;
+		cur = cur->next;
 	}
-
 }
 
 int store_flag(t_lsflags *flags, char c)

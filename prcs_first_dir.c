@@ -6,7 +6,7 @@
 /*   By: mnishimo <mnishimo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/31 22:08:26 by mnishimo          #+#    #+#             */
-/*   Updated: 2019/02/04 19:11:23 by mnishimo         ###   ########.fr       */
+/*   Updated: 2019/02/04 23:35:01 by mnishimo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,19 @@ int	store_dp(DIR *dirp, t_list **files, t_fmt *fmt, t_lsflags *flags)
 		len++;
 	}
 	fmt->name = name;
-	fmt->len = len;
+	fmt->len = len + add_homedir(flags->a, files);
+	return (0);
+}
+
+int		add_homedir(char a, t_list **files)
+{
+	t_list	*new;
+
+	if (a == 'a' && (new = ft_lstnew(ft_strdup("."), 2)) != NULL)
+	{
+		ft_lstadd(files, new);
+		return (1);
+	}
 	return (0);
 }
 
@@ -55,7 +67,6 @@ int	search_file(t_lsflags *flags, char *name, char **output)
 		path = strdup(".");
 	else
 		path = strndup(name, i + 1);
-	ft_printf("created path is %s i is %i name s %s\n",path, i, name);
 	if ((dirp = opendir(path)) == NULL)
 		return (-1);
 	free(path);

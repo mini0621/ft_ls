@@ -6,7 +6,7 @@
 /*   By: mnishimo <mnishimo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/31 18:43:47 by mnishimo          #+#    #+#             */
-/*   Updated: 2019/02/04 14:41:10 by mnishimo         ###   ########.fr       */
+/*   Updated: 2019/02/04 23:12:08 by mnishimo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,8 @@
 
 void	ft_ldel(void *ptr, size_t size)
 {
+	if (ptr == NULL)
+		return ;
 	free((char *)ptr);
 	ft_bzero(ptr, size);
 }

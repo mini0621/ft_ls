@@ -6,7 +6,7 @@
 /*   By: mnishimo <mnishimo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/02 17:27:39 by mnishimo          #+#    #+#             */
-/*   Updated: 2019/02/04 18:43:00 by mnishimo         ###   ########.fr       */
+/*   Updated: 2019/02/04 23:44:06 by mnishimo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,7 @@ int	get_output(char *path, t_list **files, t_lsflags *flags, char **output)
 {
 	t_list	*dirs;
 
-	if (flags->a == 'a')
-		ft_lstadd(files, ft_lstnew(".", 2));
+	
 	//TODO for R
 	if (flags->cr == 'R')
 		separate_dir(&dirs, files, path);
@@ -74,39 +73,49 @@ t_list	*separate_dir(t_list **dirs, t_list **files, char *path)
 {
 	t_list	*cur;
 	t_list	*pre;
+	t_list	*last;
 	char	*tpath;
 	struct stat	sttbuff;
 
 	if (files == NULL || *files == NULL)
 		return (NULL);
 	cur = *files;
-	pre = cur;
-	tpath = add_path(path, (char *)(cur->content));
-	while (cur && tpath && lstat(tpath, &sttbuff) == 0)
+	last = NULL;
+	while (cur != NULL && (tpath = add_path(path, (char *)(cur->content))) != NULL
+		&& lstat(tpath, &sttbuff) == 0)
+	
 	{
-		if ((sttbuff.st_mode & S_IFMT) == S_IFDIR)
-			store_dir(dirs, files, &cur, pre);
-		pre = cur;
-		if (cur != *files)
-			cur = cur->next;
+		if (last == NULL)
+			*dirs = store_dir(((sttbuff.st_mode & S_IFMT) == S_IFDIR), files, &cur, &pre);
+		else
+			last->next = store_dir(((sttbuff.st_mode & S_IFMT) == S_IFDIR), files, &cur, &pre);
+		if (*dirs != NULL)
+			last = *dirs;
+		if (last != NULL && last->next != NULL)
+			last = last->next;
 		ft_strdel(&tpath);
-		tpath = add_path(path, (char *)(cur->content));
 	}
 	return (*dirs);
 }
 
-void	store_dir(t_list **dirs, t_list **files, t_list **cur, t_list *pre)
+t_list	*store_dir(int d, t_list **files, t_list **cur, t_list **pre)
 {
 	t_list	*dir;
-
+	if (d == 0)
+	{
+		*pre = *cur;
+		*cur = (*cur)->next;
+		return (NULL);
+	}
 	if (*cur == *files)
 	{
 		*files = (*cur)->next;
 		dir = *cur;
-		*cur = (*cur)->next;
 	}
 	else
-		dir = ft_lstsub(pre, cur);
+		dir = ft_lstsub(*pre, cur);
+	*pre = *cur;
+	*cur = (*cur)->next;
 	dir->next = NULL;
-	ft_lstadd(dirs, dir);
+	return (dir);
 }
