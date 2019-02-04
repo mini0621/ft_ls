@@ -6,7 +6,7 @@
 /*   By: mnishimo <mnishimo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/31 22:17:03 by mnishimo          #+#    #+#             */
-/*   Updated: 2019/02/04 01:01:02 by mnishimo         ###   ########.fr       */
+/*   Updated: 2019/02/04 17:34:07 by mnishimo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,8 @@ void sort_files(char *path, t_list **files, t_lsflags *flags)
 {
 	if (files == NULL || *files == NULL || flags->f == 'f')
 		return ;
-	if (flags->t == 't')
-		sort_by_time(path, files, flags->r);
+	if (flags->t == 't' || flags->u == 'u')
+		sort_by_time(path, files, flags->r, flags);
 	else
 		sort_by_name(files, flags->r);
 }
@@ -25,60 +25,81 @@ void sort_files(char *path, t_list **files, t_lsflags *flags)
 void	sort_by_name(t_list **files, char r)
 {
 	t_list	*cur;
-	t_list	*pre;
+	t_list	*index;
+	t_list	*sorted;
+	t_list	*tmp;
+	int		ret;
 
-	pre = *files;
-	cur = pre->next;
+	if (files == NULL || *files == NULL || (*files)->next == NULL)
+		return ;
+	sorted = NULL;
+	cur = *files;
 	while (cur->next != NULL)
 	{
-		if (pre == *files
-			&& ft_strcmp((char *)(pre->content), (char *)(cur->content)) < 0)
+		index = NULL;
+		tmp = cur;
+		while (cur->next != NULL)
 		{
-			pre->next = cur->next;
-			cur->next = pre;
-			*files = cur;
+			if (index == NULL)
+				ret =  ft_strcmp((char *)(cur->next->content), (char *)(tmp->content));
+			else
+				ret = ft_strcmp((char *)(cur->next->content), (char *)(index->next->content));
+			if ((r == 'r' && ret > 0) || (r != 'r' && ret < 0))
+				index = cur;
+			cur = cur->next;
 		}
-		if (ft_strcmp((char *)(cur->content), (char *)(cur->next->content)) < 0)
-		{
-			swap_lst(pre, cur);
-			pre = *files;
-			cur = pre->next;
-		}
-		cur = cur->next;
-		pre = pre->next;
+		cur = insertion_sort(files, index, &sorted, cur);
 	}
 }
 
-void	swap_lst(t_list *pre, t_list *cur)
+t_list	*insertion_sort(t_list **head, t_list *index, t_list **sorted, t_list *cur)
 {
-	t_list	*tmp;
-
-	tmp = cur->next;
-	cur->next = cur->next->next;
-	pre->next = tmp;
-	tmp->next = cur;
-}
-
-void	sort_by_time(char *path, t_list **files, char r)
-{
-	/*	t_list			*new;
-		t_list			*last;
-		t_list			*max;
-		struct stat		sttbuff;
-		char	*tpath;
-
-		cur = *files;
-		tpath = add_path(path, (char *)(cur->content));
-		while (cur && tpath && lstat(tpath, &sttbuff) == 0)
+	if (*sorted == NULL)
+	{
+		if (index != NULL)
 		{
-		if ((sttbuff.st_mtime > max)
-		store_(dirs, files, &cur, pre);
-		pre = cur;
-		if (cur != *files)
-		cur = cur->next;
-		ft_strdel(&tpath);
-		tpath = add_path(path, (char *)(cur->content));
+			cur->next = *head;
+			*head = index->next;
+			index->next = NULL;
 		}
-		return (*dirs);
-		*/
+		*sorted = *head;
+		return ((*sorted)->next);
+	}
+	if (index == NULL)
+	{
+		*sorted = (*sorted)->next;
+		return ((*sorted)->next);
+	}
+	cur->next = (*sorted)->next;
+	(*sorted)->next = index->next;
+	index->next = NULL;
+	*sorted = (*sorted)->next;
+	return ((*sorted)->next);
+}
+void	sort_by_time(char *path, t_list **files, char r, t_lsflags *flags)
+{
+	t_list	*sorted;
+	t_list	*index;
+	t_list	*cur;
+	time_t		val;
+	int		ret;
+
+	
+	if (files == NULL || *files == NULL || (*files)->next == NULL)
+		return ;
+	sorted = NULL;
+	cur = *files;
+	while (cur->next != NULL)
+	{
+		val = get_time(path, (char *)(cur->content), flags);
+		index = NULL;
+		while (cur->next != NULL)
+		{
+			ret = get_time(path, (char *)(cur->next->content), flags);
+			if ((r == 'r' && ret > val) || (r != 'r' && ret < val))
+				index = cur;
+			cur = cur->next;
+		}
+		cur = insertion_sort(files, index, &sorted, cur);
+	}
 }

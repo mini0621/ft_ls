@@ -6,13 +6,13 @@
 /*   By: mnishimo <mnishimo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/31 22:08:26 by mnishimo          #+#    #+#             */
-/*   Updated: 2019/02/04 01:01:05 by mnishimo         ###   ########.fr       */
+/*   Updated: 2019/02/04 19:11:23 by mnishimo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_ls.h"
 
-int	store_dp(DIR *dirp, t_list **files, t_fmt *fmt)
+int	store_dp(DIR *dirp, t_list **files, t_fmt *fmt, t_lsflags *flags)
 {
 	t_list			*new;
 	struct dirent	*dp;
@@ -23,7 +23,7 @@ int	store_dp(DIR *dirp, t_list **files, t_fmt *fmt)
 	*files = NULL;
 	len = 0;
 	name = 0;
-	while ((dp = readdir(dirp)) != NULL)
+	while ((dp = skip_hid_files(dirp, flags->a)) != NULL)
 	{
 		if (!(new = ft_lstnew(dp->d_name, sizeof(char) * (ft_strlen(dp->d_name) + 1))))
 			return (-1);
@@ -45,22 +45,30 @@ int	search_file(t_lsflags *flags, char *name, char **output)
 {
 	DIR		*dirp;
 	struct dirent	*dp;
+	char			*path;
+	int				i;
 
-	if ((dirp = opendir(".")) == NULL)
+	i = ft_strlen(name) - 1;
+	while (i > -1 && name[i] != '/')
+		i--;
+	if (i == -1)
+		path = strdup(".");
+	else
+		path = strndup(name, i + 1);
+	ft_printf("created path is %s i is %i name s %s\n",path, i, name);
+	if ((dirp = opendir(path)) == NULL)
 		return (-1);
+	free(path);
 	while ((dp = readdir(dirp)) != NULL)
 	{
 		if (ft_strcmp(dp->d_name, name) == 0)
 		{
-			//TODO
-			ft_printf("entry: %s\n", dp->d_name);
+			ft_printf("%s\n", dp->d_name);
 			return (0);
 		}
 	}
 	closedir(dirp);
 	return (-1);
-
-
 }
 
 struct dirent	*skip_hid_files(DIR *dirp, char a)

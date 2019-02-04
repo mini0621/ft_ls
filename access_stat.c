@@ -1,32 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   output.c                                           :+:      :+:    :+:   */
+/*   access_stat.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mnishimo <mnishimo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/01/31 14:11:16 by mnishimo          #+#    #+#             */
-/*   Updated: 2019/02/04 17:39:28 by mnishimo         ###   ########.fr       */
+/*   Created: 2019/02/04 14:38:20 by mnishimo          #+#    #+#             */
+/*   Updated: 2019/02/04 17:34:17 by mnishimo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_ls.h"
 
-int	print_error(char *message, char *ver, char usage)
+time_t		get_time(char *path, char *name, t_lsflags *flags)
 {
-	if (ver == NULL || message == NULL)
-		return (0);
-	ft_printf(message, ver);
-	if (usage == 'y')
-		ft_printf("usage: ft_ls [-Radflrtu1] [file ...]");
-	return (0);
-}
+	char		*tpath;
+	struct stat	sttbuff;
 
-int	print_output(char **output)
-{
-	if (output == NULL || *output == NULL)
-		return (0);
-	ft_printf(*output);
-	ft_strdel(output);
-	return (0);
+	tpath = add_path(path, name);
+	if (lstat(tpath, &sttbuff) != 0)
+		return (-1);
+	free(tpath);
+	if (flags->u == 'u')
+		return (sttbuff.st_atime);
+	return (sttbuff.st_mtime);
 }

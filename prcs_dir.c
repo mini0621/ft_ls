@@ -6,7 +6,7 @@
 /*   By: mnishimo <mnishimo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/02 17:27:39 by mnishimo          #+#    #+#             */
-/*   Updated: 2019/02/04 00:24:11 by mnishimo         ###   ########.fr       */
+/*   Updated: 2019/02/04 18:43:00 by mnishimo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@ int	get_output(char *path, t_list **files, t_lsflags *flags, char **output)
 	else
 		prcs_files(files, flags, output, flags->fmt);
 	//output?
+	print_output(output);
 	if (flags->cr == 'R')
 		prcs_dirs(path, files, flags, output);
 	return (1);
@@ -41,6 +42,7 @@ void	prcs_files(t_list **files, t_lsflags *flags, char **output, t_fmt *fmt)
 	t_list	*cur;
 	int		mod;
 	int		i;
+	char	*tmp;
 
 	if (files == NULL || *files == NULL)
 		return ;
@@ -54,11 +56,15 @@ void	prcs_files(t_list **files, t_lsflags *flags, char **output, t_fmt *fmt)
 		{
 			i = 0;
 			cur = *files;
-			ft_printf("\n");
+			ft_asprintf(&tmp, "\n");
+			*output = ft_strjoinfree(output, &tmp, 3);
 			mod++;
 		}
 		if (i % fmt->row == mod)
-			ft_printf("%-*s", fmt->name + 1, (char *)(cur->content));
+		{
+			ft_asprintf(&tmp, "%-*s", fmt->name, (char *)(cur->content));
+			*output = ft_strjoinfree(output, &tmp, 3);
+		}
 		cur = cur->next;
 		i++;
 	}

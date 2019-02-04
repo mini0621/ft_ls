@@ -6,7 +6,7 @@
 /*   By: mnishimo <mnishimo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/31 14:11:16 by mnishimo          #+#    #+#             */
-/*   Updated: 2019/02/03 23:30:59 by mnishimo         ###   ########.fr       */
+/*   Updated: 2019/02/04 19:20:58 by mnishimo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,6 @@
 
 char	read_input(t_lsflags *flags, t_list **path, int argc, char **argv)
 {
-	//store the file name in path
-	//store flags
-	//in case of illegal option, return -1 and store the option in path(alloc)
 	int	i;
 	int	j;
 	t_list	*new;
@@ -35,20 +32,45 @@ char	read_input(t_lsflags *flags, t_list **path, int argc, char **argv)
 		}
 		i++;
 	}
-	if (i == argc)
+	while (i < argc && (new = ft_lstnew(argv[i], ft_strlen(argv[i]))) != NULL)
 	{
-		if ((new = ft_lstnew(ft_strdup("."), sizeof(char *))) == NULL)
-			return ('\0');
-		ft_lstpushback(path, new);
-	}
-	while (i < argc)
-	{
-		if ((new = ft_lstnew(ft_strdup(argv[i]), sizeof(char *))) == NULL)
-			return ('\0');
 		ft_lstpushback(path, new);
 		i++;
 	}
+	if (flags->cr == 'R')
+		sort_input(path);
 	return (solve_flagconf(flags));
+}
+
+void	sort_input(t_list **path)
+{
+	t_list	*cur;
+	t_list	*last;
+	t_list	*tmp;
+	t_list	*pre;
+
+	if (*path == NULL)
+		return ;
+	tmp = *path;
+	while (tmp->next != NULL)
+		tmp = tmp->next;
+	while (cur != tmp)
+	{
+		if (opendir((char *)(cur->next->content)) != NULL)
+		{
+			last = tmp;
+			while (last->next != NULL)
+				last = last->next;
+			pre = *path;
+			while (pre->next != cur)
+				pre = pre->next;
+			last->next = cur;
+			pre->next = cur->next;
+			cur->next = NULL;
+		}
+		cur = pre->next;
+	}
+
 }
 
 int store_flag(t_lsflags *flags, char c)
