@@ -12,7 +12,7 @@ LIB = -lftprintf
 
 DEPS =
 
-SRC = ft_ls.c input.c output.c list.c prcs_first_dir.c formatting.c path_string.c prcs_dir.c longfmt.c
+SRC = ft_ls.c input.c output.c list.c prcs_first_dir.c formatting.c path_string.c prcs_dir.c longfmt.c sort_files.c
 OBJ = $(SRC:.c=.o)
 
 
@@ -29,7 +29,7 @@ $(LIBFT):
 	$(CC) -I $(INCLUDES) -o $@ -c $<  
 
 $(NAME): $(OBJ) $(LIBFT)
-	$(CC)  -o $(NAME) $(OBJ) -L $(LDIR) $(LIB) -I$(INCLUDES) -fsanitize=address -g
+	$(CC)  -o $(NAME) $(OBJ) -L $(LDIR) $(LIB) -I$(INCLUDES)
 
 clean:
 	$(RM) $(OBJ)

@@ -6,7 +6,7 @@
 /*   By: mnishimo <mnishimo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/01 18:20:25 by mnishimo          #+#    #+#             */
-/*   Updated: 2019/02/02 21:08:18 by mnishimo         ###   ########.fr       */
+/*   Updated: 2019/02/03 21:53:42 by mnishimo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ void	prcs_files_l(char *path, t_list **files, t_lsflags *flags, char **output)
 		else if ((stat.st_mode & S_IFMT) == S_IFREG)
 			fmt_reg((char *)(cur->content), &stat, flags);
 		cur = cur->next;
-		ft_strdel(tpath);
+		ft_strdel(&tpath);
 		tpath = add_path(path, (char *)(cur->content));
 	}
 }
