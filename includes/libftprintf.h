@@ -6,7 +6,7 @@
 /*   By: mnishimo <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/12/13 17:55:20 by mnishimo          #+#    #+#             */
-/*   Updated: 2019/02/04 18:28:59 by mnishimo         ###   ########.fr       */
+/*   Updated: 2019/02/05 15:45:36 by mnishimo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,6 +83,7 @@ void				ft_putchar_fd(char c, int fd);
 void				ft_putstr_fd(char const *s, int fd);
 void				ft_putendl_fd(char const *s, int fd);
 void				ft_putnbr_fd(int n, int fd);
+t_list				*ft_lstsub(t_list **alst, t_list *cur);
 t_list				*ft_lstnew(void const *content, size_t content_size);
 void				ft_lstdelone(t_list **alst, void (*del)(void*, size_t));
 void				ft_lstdel(t_list **alst, void (*del)(void *, size_t));
@@ -94,7 +95,6 @@ int					ft_power(int base, int power);
 t_list				*ft_lstlast(t_list *alst);
 int					ft_lstlen(t_list *alst);
 t_list				*ft_lstat(t_list *alst, unsigned int nbr);
-t_list				*ft_lstsub(t_list *before, t_list **cur);
 void				ft_lstpushback(t_list **alst, t_list *new);
 void				ft_lstdelof(t_list **alst, void *content,
 		int (*cmp)(void *, void *));

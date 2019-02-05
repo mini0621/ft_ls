@@ -6,7 +6,7 @@
 /*   By: mnishimo <mnishimo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/02 17:27:39 by mnishimo          #+#    #+#             */
-/*   Updated: 2019/02/04 23:44:06 by mnishimo         ###   ########.fr       */
+/*   Updated: 2019/02/05 17:05:28 by mnishimo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,24 +16,43 @@ int	get_output(char *path, t_list **files, t_lsflags *flags, char **output)
 {
 	t_list	*dirs;
 
-	
-	//TODO for R
-	if (flags->cr == 'R')
+
+	if (flags->rflag != 'y' && flags->cr == 'R')
 		separate_dir(&dirs, files, path);
+	else if (flags->rflag == 'y')
+		duplicate_dir(&dirs, files, path);
 	if (flags->l == 'l')
 		prcs_files_l(path, files, flags, output);
 	else
 		prcs_files(files, flags, output, flags->fmt);
-	//output?
 	print_output(output);
 	if (flags->cr == 'R')
-		prcs_dirs(path, files, flags, output);
+		prcs_dirs(path, &dirs, flags, output);
+	ft_lstdel(files, &ft_ldel);
+	ft_lstdel(&dirs, &ft_ldel);
 	return (1);
 }
 
 void	prcs_dirs(char *path, t_list **dir, t_lsflags *flags, char **output)
 {
+	t_list	*tmp;
+	char	*tpath;
 
+	flags->rflag = 'y';
+	while (*dir != NULL)
+	{
+		print_output(output);
+		ft_printf("\n");
+		tpath = add_path(path, (char *)((*dir)->content));
+		if (manage_path(tpath, flags, output) == 2)
+			print_error("ft_ls: %s: No such file or directory\n", (char *)((*dir)->content), 'n');
+		tmp = *dir;
+		free(tpath);
+		*dir = (*dir)->next;
+		free(tmp->content);
+		free(tmp);
+	}
+	print_output(output);
 }
 
 void	prcs_files(t_list **files, t_lsflags *flags, char **output, t_fmt *fmt)
@@ -72,50 +91,57 @@ void	prcs_files(t_list **files, t_lsflags *flags, char **output, t_fmt *fmt)
 t_list	*separate_dir(t_list **dirs, t_list **files, char *path)
 {
 	t_list	*cur;
-	t_list	*pre;
-	t_list	*last;
+	t_list	*ptr;
 	char	*tpath;
 	struct stat	sttbuff;
 
+	*dirs = NULL;
 	if (files == NULL || *files == NULL)
 		return (NULL);
 	cur = *files;
-	last = NULL;
 	while (cur != NULL && (tpath = add_path(path, (char *)(cur->content))) != NULL
-		&& lstat(tpath, &sttbuff) == 0)
-	
+			&& lstat(tpath, &sttbuff) == 0)
 	{
-		if (last == NULL)
-			*dirs = store_dir(((sttbuff.st_mode & S_IFMT) == S_IFDIR), files, &cur, &pre);
+		if(ft_strcmp((char *)(cur->content), ".") != 0
+			&& (sttbuff.st_mode & S_IFMT) == S_IFDIR)
+		{
+			ptr = cur;
+			cur = cur->next;
+			ptr = ft_lstsub(files, ptr);
+			ft_lstpushback(dirs, ptr);
+		}
 		else
-			last->next = store_dir(((sttbuff.st_mode & S_IFMT) == S_IFDIR), files, &cur, &pre);
-		if (*dirs != NULL)
-			last = *dirs;
-		if (last != NULL && last->next != NULL)
-			last = last->next;
+			cur = cur->next;
 		ft_strdel(&tpath);
 	}
 	return (*dirs);
 }
 
-t_list	*store_dir(int d, t_list **files, t_list **cur, t_list **pre)
+t_list	*duplicate_dir(t_list **dirs, t_list **files, char *path)
 {
-	t_list	*dir;
-	if (d == 0)
-	{
-		*pre = *cur;
-		*cur = (*cur)->next;
+	t_list	*cur;
+	t_list	*ptr;
+	char	*tpath;
+	struct stat	sttbuff;
+
+	*dirs = NULL;
+	if (files == NULL || *files == NULL)
 		return (NULL);
-	}
-	if (*cur == *files)
+	cur = *files;
+	while (cur && (tpath = add_path(path, (char *)(cur->content))) != NULL
+			&& lstat(tpath, &sttbuff) == 0)
 	{
-		*files = (*cur)->next;
-		dir = *cur;
+		if(ft_strcmp((char *)(cur->content), ".") != 0
+			&& (sttbuff.st_mode & S_IFMT) == S_IFDIR)
+		{
+			if ((ptr = ft_lstnew((char *)(cur->content), sizeof(cur->content_size))) != NULL)
+			{
+				ft_lstpushback(dirs, ptr);
+			}
+		}
+		cur = cur->next;
+		ft_strdel(&tpath);
 	}
-	else
-		dir = ft_lstsub(*pre, cur);
-	*pre = *cur;
-	*cur = (*cur)->next;
-	dir->next = NULL;
-	return (dir);
+	return (*dirs);
 }
+

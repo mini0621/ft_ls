@@ -6,7 +6,7 @@
 /*   By: mnishimo <mnishimo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/30 22:43:07 by mnishimo          #+#    #+#             */
-/*   Updated: 2019/02/04 23:44:15 by mnishimo         ###   ########.fr       */
+/*   Updated: 2019/02/05 16:46:40 by mnishimo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,7 @@ typedef struct	s_lsflags
 	char	d;
 	char	u;
 	char	n1;
+	char	rflag;
 }				t_lsflags;
 
 typedef struct	s_file
@@ -64,7 +65,7 @@ int				search_file(t_lsflags *flags, char *name, char **output);
 struct dirent	*skip_hid_files(DIR *dirp, char a);
 int		add_homedir(char a, t_list **files);
 
-t_list	*store_dir(int d, t_list **files, t_list **cur, t_list **pre);
+t_list	*duplicate_dir(t_list **dirs, t_list **files, char *path);
 t_list	*separate_dir(t_list **dirs, t_list **files, char *path);
 void	prcs_files(t_list **dir, t_lsflags *flags, char **output, t_fmt *fmt);
 void	prcs_dirs(char *path, t_list **dir, t_lsflags *flags, char **output);

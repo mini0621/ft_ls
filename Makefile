@@ -29,7 +29,7 @@ $(LIBFT):
 	$(CC) -I $(INCLUDES) -o $@ -c $<  
 
 $(NAME): $(OBJ) $(LIBFT)
-	$(CC)  -o $(NAME) $(OBJ) -L $(LDIR) $(LIB) -I$(INCLUDES)
+	$(CC)  -o $(NAME) $(OBJ) -L $(LDIR) $(LIB) -I$(INCLUDES) -fsanitize=address -g
 
 clean:
 	$(RM) $(OBJ)

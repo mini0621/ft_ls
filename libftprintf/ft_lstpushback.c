@@ -6,7 +6,7 @@
 /*   By: mnishimo <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/11/29 18:02:14 by mnishimo          #+#    #+#             */
-/*   Updated: 2019/02/02 17:58:25 by mnishimo         ###   ########.fr       */
+/*   Updated: 2019/02/05 16:41:50 by mnishimo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,13 +16,15 @@ void	ft_lstpushback(t_list **alst, t_list *new)
 {
 	t_list	*current;
 
-	if (alst == NULL || *alst == NULL)
+	if (alst == NULL)
+		return ;
+	if (*alst == NULL)
 	{
 		*alst = new;
 		return ;
 	}
 	current = *alst;
-	while (current->next != NULL)
+	while (current != NULL && current->next != NULL)
 		current = current->next;
 	current->next = new;
 }
