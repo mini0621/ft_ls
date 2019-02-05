@@ -6,13 +6,13 @@
 /*   By: mnishimo <mnishimo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/31 13:45:28 by mnishimo          #+#    #+#             */
-/*   Updated: 2019/02/05 16:48:18 by mnishimo         ###   ########.fr       */
+/*   Updated: 2019/02/05 19:25:34 by mnishimo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_ls.h"
 
-int	manage_path(char *path, t_lsflags *flags, char **output)
+int	manage_path(char *path, t_lsflags *flags, char **output, char c)
 {
 	DIR				*dirp;
 	t_list			*files;
@@ -23,7 +23,7 @@ int	manage_path(char *path, t_lsflags *flags, char **output)
 	flags->fmt = &fmt;
 	if ((dirp = opendir(path)) == NULL)
 		return (2);
-	if (ft_strcmp(".", path) != 0)
+	if (c == 'n' && ft_strcmp(".", path) != 0)
 	{
 		ft_asprintf(&tmp, "%s:\n", path);
 		*output = ft_strjoinfree(output, &tmp, 3);
@@ -52,7 +52,7 @@ void	output_arg_files(t_list **path, char **output, t_lsflags *flags)
 		separate_dir(&dir, path, NULL);
 	if (flags->l == 'l')
 	{
-		get_fmt(*path, flags, &fmt);
+		get_fmt(NULL, *path, flags, &fmt);
 		prcs_files_l(NULL, path, flags, output);
 	}
 	else
@@ -77,19 +77,21 @@ int	main(int argc, char **argv)
 	if ((c = read_input(&flags, &path, argc, argv)) !=  '\0')
 		return (print_error("ft_ls: illegal option -- %s\n", &c, 'y'));
 	if (path == NULL)
-		return (manage_path(".", &flags, &output));
+		return (manage_path(".", &flags, &output, 'y'));
 	sort_files(NULL, &path, &flags);
 	output_arg_files(&path, &output, &flags);
+	c = (path != NULL && path->next == NULL) ? 'y' : 'n';
 	while (path != NULL)
 	{
 		print_output(&output);
-		ft_printf("\n");
-		if (manage_path((char *)(path->content), &flags, &output) == 2)
+		if (manage_path((char *)(path->content), &flags, &output, c) == 2)
 			print_error("ft_ls: %s: No such file or directory\n", (char *)path->content, 'n');
 		tmp = path;
 		path = path->next;
 		free(tmp->content);
 		free(tmp);
+		if (path != NULL)
+			ft_printf("\n");
 	}
 	print_output(&output);
 	return (0);

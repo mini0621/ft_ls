@@ -6,7 +6,7 @@
 /*   By: mnishimo <mnishimo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/02 17:27:39 by mnishimo          #+#    #+#             */
-/*   Updated: 2019/02/05 17:05:28 by mnishimo         ###   ########.fr       */
+/*   Updated: 2019/02/05 19:34:57 by mnishimo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,9 +27,11 @@ int	get_output(char *path, t_list **files, t_lsflags *flags, char **output)
 		prcs_files(files, flags, output, flags->fmt);
 	print_output(output);
 	if (flags->cr == 'R')
+	{
 		prcs_dirs(path, &dirs, flags, output);
+		ft_lstdel(&dirs, &ft_ldel);
+	}
 	ft_lstdel(files, &ft_ldel);
-	ft_lstdel(&dirs, &ft_ldel);
 	return (1);
 }
 
@@ -44,7 +46,7 @@ void	prcs_dirs(char *path, t_list **dir, t_lsflags *flags, char **output)
 		print_output(output);
 		ft_printf("\n");
 		tpath = add_path(path, (char *)((*dir)->content));
-		if (manage_path(tpath, flags, output) == 2)
+		if (manage_path(tpath, flags, output, 'n') == 2)
 			print_error("ft_ls: %s: No such file or directory\n", (char *)((*dir)->content), 'n');
 		tmp = *dir;
 		free(tpath);

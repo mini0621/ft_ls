@@ -6,7 +6,7 @@
 /*   By: mnishimo <mnishimo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/31 14:11:16 by mnishimo          #+#    #+#             */
-/*   Updated: 2019/02/05 16:49:23 by mnishimo         ###   ########.fr       */
+/*   Updated: 2019/02/05 18:41:37 by mnishimo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,6 +98,8 @@ char solve_flagconf(t_lsflags *flags)
 {
 	if (flags->f == 'f')
 		flags->a = 'a';
+	if (flags->l == 'l')
+		flags->n1 = '1';
 	return ('\0');
 }
 

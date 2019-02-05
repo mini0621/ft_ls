@@ -6,7 +6,7 @@
 /*   By: mnishimo <mnishimo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/01 18:20:25 by mnishimo          #+#    #+#             */
-/*   Updated: 2019/02/04 21:57:19 by mnishimo         ###   ########.fr       */
+/*   Updated: 2019/02/05 20:07:46 by mnishimo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,65 +15,76 @@
 void	prcs_files_l(char *path, t_list **files, t_lsflags *flags, char **output)
 {
 	t_fmt	fmt;
+	char	*tmp;
 	t_list	*cur;
 	char	*tpath;
 	struct stat	stat;
 
 	if (files == NULL || *files == NULL)
 		return ;
-	//get name width
-	get_fmt(*files, flags, &fmt);
+	ft_asprintf(&tmp, "total %llu\n", get_fmt(path, *files, flags, &fmt));
+	*output = ft_strjoinfree(output, &tmp, 3);
 	cur = *files;
-	tpath = add_path(path, (char *)(cur->content));
-	while (cur != NULL && tpath && lstat(tpath, &stat) == 0)
+	flags->fmt = &fmt;	
+	while (cur && (tpath = add_path(path, (char *)(cur->content))) != NULL
+		&& lstat(tpath, &stat) == 0)
 	{
-		if ((stat.st_mode & S_IFMT) == S_IFDIR)
-			fmt_dir((char *)(cur->content), &stat, flags);
-		else if ((stat.st_mode & S_IFMT) == S_IFLNK)
-			fmt_lnk(path, (char *)(cur->content), &stat, flags);
-		else if ((stat.st_mode & S_IFMT) == S_IFREG)
-			fmt_reg((char *)(cur->content), &stat, flags);
-		cur = cur->next;
+		tmp = fmt_reg(path, (char *)(cur->content), &stat, flags);
+		if (tmp == NULL)
+			return ;
+		*output = ft_strjoinfree(output, &tmp, 3);
 		ft_strdel(&tpath);
-		tpath = add_path(path, (char *)(cur->content));
+		cur = cur->next;
 	}
 }
 
-//TODO
-//for the long format
-void	fmt_dir(char *d_name, struct stat *stat, t_lsflags *flags)
-{
-	ft_printf("check: %i, %s, %s, %s\n", stat->st_nlink,(getpwuid(stat->st_uid))->pw_name, (getgrgid(stat->st_gid))->gr_name, ctime(&(stat->st_mtime)));
-}
-
-void	fmt_lnk(char *path, char *d_name, struct stat *stat, t_lsflags *flags)
+char	*fmt_lnk(char *path, char *d_name, struct stat *stat, char **ret)
 {
 	char	*buf;
 	ssize_t	buff_size;
-	char	*tpath;
-
-	tpath = add_path(path, d_name);
+	char	*tmp;
+	
+	if ((stat->st_mode & S_IFMT) != S_IFLNK)
+	{
+		buf = ft_strdup("\n");
+		tmp = ft_strjoinfree(ret, &buf, 3);
+		return (tmp);
+	}
+	tmp = add_path(path, d_name);
 	buff_size = stat->st_size + 1;
-	ft_printf("get the len of %u", buff_size);
 	if ((buf = ft_strnew(buff_size)) == NULL)
-		return ;
-	readlink(tpath, buf, buff_size);
-	ft_printf("link: %s\n", buf);
-	free(buf);
-	free(tpath);
-	ft_printf("check: %i, %s, %s, %s\n", stat->st_nlink,(getpwuid(stat->st_uid))->pw_name, (getgrgid(stat->st_gid))->gr_name, ctime(&(stat->st_mtime)));
+		return (NULL);
+	readlink(tmp, buf, buff_size);
+	ft_strdel(&tmp);
+	ft_asprintf(&tmp, " -> %s\n", buf);
+	ft_strdel(&buf);
+	tmp = ft_strjoinfree(ret, &tmp, 3);
+	return (tmp);
 }
 
-void	fmt_reg(char *d_name, struct stat *stat, t_lsflags *flags)
+char	*fmt_reg(char *path, char *d_name, struct stat *stat, t_lsflags *flags)
 {
-	char	*attr;
+	char	type;
+	char	*tmp;
+	char	*ret;
+	t_fmt	*fmt;
 
-	if ((attr = fmt_attr(stat->st_mode, '-')) == NULL)
-		return ;
-	ft_printf("%s\t", attr);
-	free(attr);
-	ft_printf("check: %i, %s, %s, %s\n", stat->st_nlink,(getpwuid(stat->st_uid))->pw_name, (getgrgid(stat->st_gid))->gr_name, ctime(&(stat->st_mtime)));
+	fmt = flags->fmt;
+	type =  ((stat->st_mode & S_IFMT) == S_IFDIR) ? 'd' : '-';
+	if ((stat->st_mode & S_IFMT) == S_IFLNK)
+		type = 'l';
+	if ((ret = fmt_attr(stat->st_mode, type)) == NULL)
+		return (NULL);
+	ft_asprintf(&tmp, " %*llu %-*s  %-*s  %*llu ", fmt->nlink, stat->st_nlink, fmt->user, (getpwuid(stat->st_uid))->pw_name, fmt->group, (getgrgid(stat->st_gid))->gr_name, fmt->size, stat->st_size);
+	ret = ft_strjoinfree(&ret, &tmp, 3);
+	tmp = ft_strsub(ctime(&(stat->st_mtime)), 4, 12);
+	ret = ft_strjoinfree(&ret, &tmp, 3);
+	ft_asprintf(&tmp, " %*s", fmt->name, d_name);
+	ret = ft_strjoinfree(&ret, &tmp, 3);
+	ret = fmt_lnk(path, d_name, stat,  &ret);	
+	return (ret);
 }
+
 
 char	*fmt_attr(mode_t mode, char type)
 {

@@ -6,7 +6,7 @@
 /*   By: mnishimo <mnishimo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/02 19:01:40 by mnishimo          #+#    #+#             */
-/*   Updated: 2019/02/04 22:51:31 by mnishimo         ###   ########.fr       */
+/*   Updated: 2019/02/05 20:00:47 by mnishimo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,12 @@ void	get_fmt_name(t_list	*files, t_lsflags *flags, t_fmt *fmt)
 	struct winsize	w;
 	t_list			*cur;
 
+	if (flags->n1 == '1')
+	{
+		fmt->name = 1;
+		fmt->row = fmt->len;
+		return ;
+	}
 	ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
 	if (fmt->len == 0 || fmt->name == 0)
 	{
@@ -29,10 +35,67 @@ void	get_fmt_name(t_list	*files, t_lsflags *flags, t_fmt *fmt)
 			cur = cur->next;
 		}
 	}
-	fmt->row = 1 + fmt->len / (w.ws_col / fmt->name);
+	if (fmt->len != 0 && fmt->name != 0)
+		fmt->row = 1 + fmt->len / (w.ws_col / fmt->name);
 }
 
-void	get_fmt(t_list	*files, t_lsflags *flags, t_fmt *fmt)
+off_t	get_fmt(char *path, t_list *files, t_lsflags *flags, t_fmt *fmt)
 {
+	t_list		*cur;
+	t_list		*ptr;
+	char		*tpath;
+	off_t		size;
+	struct stat	sttbuff;
 
+	cur = files;
+	size = 0;
+	init_fmt(fmt);
+	get_fmt_name(files, flags, fmt);
+	while (cur && (tpath = add_path(path, (char *)(cur->content))) != NULL
+			&& lstat(tpath, &sttbuff) == 0)
+	{
+		size += fmt_cmp(fmt, &sttbuff);
+		cur = cur->next;
+		ft_strdel(&tpath);
+	}
+	return (size);
+}
+
+void	init_fmt(t_fmt *fmt)
+{
+	fmt->nlink = 0;
+	fmt->user = 0;
+	fmt->group = 0;
+	fmt->size = 0;
+}
+
+off_t	fmt_cmp(t_fmt *fmt, struct stat *stat)
+{
+	size_t len;
+	nlink_t	nlink;
+	off_t	size;
+
+	len = 0;
+	nlink = stat->st_nlink;
+	while (nlink != 0)
+	{
+		nlink /= 10;
+		len++;
+	}
+	if (len > fmt->nlink)
+		fmt->nlink = len;
+	if ((len = ft_strlen((getpwuid(stat->st_uid))->pw_name)) > fmt->user)
+		fmt->user = len;
+	if ((len = ft_strlen((getgrgid(stat->st_gid))->gr_name)) > fmt->group)
+		fmt->group = len;
+	len = 0;
+	size = stat->st_size;
+	while (size != 0)
+	{
+		size /= 10;
+		len++;
+	}
+	if (len > fmt->size)
+		fmt->size = len;
+	return (stat->st_size);
 }

@@ -6,7 +6,7 @@
 /*   By: mnishimo <mnishimo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/31 22:08:26 by mnishimo          #+#    #+#             */
-/*   Updated: 2019/02/05 17:01:19 by mnishimo         ###   ########.fr       */
+/*   Updated: 2019/02/05 20:09:28 by mnishimo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ int	search_file(t_lsflags *flags, char *name, char **output)
 	while (i > -1 && name[i] != '/')
 		i--;
 	if (i == -1)
-		path = strdup(".");
+		path = ft_strdup(".");
 	else
 		path = strndup(name, i + 1);
 	if ((dirp = opendir(path)) == NULL)
