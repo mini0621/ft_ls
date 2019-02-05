@@ -6,7 +6,7 @@
 /*   By: mnishimo <mnishimo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/31 14:11:16 by mnishimo          #+#    #+#             */
-/*   Updated: 2019/02/05 18:41:37 by mnishimo         ###   ########.fr       */
+/*   Updated: 2019/02/06 00:36:57 by mnishimo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@ char	read_input(t_lsflags *flags, t_list **path, int argc, char **argv)
 	t_list	*new;
 
 	i = 1;
+	init_flags(flags);
 	while (i < argc)
 	{
 		if (argv[i][0] != '-')
@@ -32,8 +33,6 @@ char	read_input(t_lsflags *flags, t_list **path, int argc, char **argv)
 		}
 		i++;
 	}
-	if (i == argc)
-		return (solve_flagconf(flags));
 	while (i < argc && (new = ft_lstnew(argv[i], ft_strlen(argv[i]) + 1)) != NULL)
 	{
 		ft_lstpushback(path, new);

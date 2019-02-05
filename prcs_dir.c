@@ -6,7 +6,7 @@
 /*   By: mnishimo <mnishimo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/02 17:27:39 by mnishimo          #+#    #+#             */
-/*   Updated: 2019/02/05 19:34:57 by mnishimo         ###   ########.fr       */
+/*   Updated: 2019/02/06 00:42:39 by mnishimo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -136,7 +136,7 @@ t_list	*duplicate_dir(t_list **dirs, t_list **files, char *path)
 		if(ft_strcmp((char *)(cur->content), ".") != 0
 			&& (sttbuff.st_mode & S_IFMT) == S_IFDIR)
 		{
-			if ((ptr = ft_lstnew((char *)(cur->content), sizeof(cur->content_size))) != NULL)
+			if ((ptr = ft_lstnew((char *)(cur->content), cur->content_size)) != NULL)
 			{
 				ft_lstpushback(dirs, ptr);
 			}

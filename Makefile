@@ -28,8 +28,8 @@ $(LIBFT):
 %.o: %.c
 	$(CC) -I $(INCLUDES) -o $@ -c $<  
 
-$(NAME): $(OBJ) $(LIBFT)
-	$(CC)  -o $(NAME) $(OBJ) -L $(LDIR) $(LIB) -I$(INCLUDES) -fsanitize=address -g
+$(NAME):  $(LIBFT) $(OBJ)
+	$(CC) $(CFLAGS)  -o $(NAME) $(OBJ) -L $(LDIR) $(LIB) -I$(INCLUDES)
 
 clean:
 	$(RM) $(OBJ)

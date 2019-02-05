@@ -6,7 +6,7 @@
 /*   By: mnishimo <mnishimo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/30 22:43:07 by mnishimo          #+#    #+#             */
-/*   Updated: 2019/02/05 19:48:27 by mnishimo         ###   ########.fr       */
+/*   Updated: 2019/02/06 00:37:45 by mnishimo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,6 +75,7 @@ char 			solve_flagconf(t_lsflags *flags);
 int 			store_flag(t_lsflags *flags, char c);
 char			read_input(t_lsflags *flags, t_list **path, int argc, char **argv);
 void			validate_input(t_list **path);
+void    		init_flags(t_lsflags *flags);
 
 char			*add_path(char *path, char *name);
 
