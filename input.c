@@ -6,7 +6,7 @@
 /*   By: mnishimo <mnishimo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/31 14:11:16 by mnishimo          #+#    #+#             */
-/*   Updated: 2019/02/06 00:36:57 by mnishimo         ###   ########.fr       */
+/*   Updated: 2019/02/06 23:07:44 by mnishimo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,8 @@
 
 char	read_input(t_lsflags *flags, t_list **path, int argc, char **argv)
 {
-	int	i;
-	int	j;
+	int		i;
+	int		j;
 	t_list	*new;
 
 	i = 1;
@@ -38,34 +38,37 @@ char	read_input(t_lsflags *flags, t_list **path, int argc, char **argv)
 		ft_lstpushback(path, new);
 		i++;
 	}
-	validate_input(path);
 	return (solve_flagconf(flags));
 }
 
-void	validate_input(t_list **path)
+int	validate_input(t_list **path)
 {
 	t_list	*cur;
 	t_list	*pre;
+	int		empty;
 	struct stat	stat;
 
+	empty = 0;
 	if (*path == NULL)
-		return ;
+		return (0);
 	cur = *path;
 	while (cur != NULL)
 	{
 		if (lstat((char *)(cur->content), &stat) != 0)
 		{
+			print_error(NULL, (char *)cur->content, 'n');
 			if (cur == *path)
 				*path = cur->next;
 			else
 				pre->next = cur->next;
-			print_error("ft_ls: %s: No such file or directory\n", (char *)cur->content, 'n');
 			free(cur->content);
 			free(cur);
+			empty++;
 		}
 		pre = cur;
 		cur = cur->next;
 	}
+	return ((empty != 0) ? -1 : 0);
 }
 
 int store_flag(t_lsflags *flags, char c)
@@ -95,10 +98,17 @@ int store_flag(t_lsflags *flags, char c)
 
 char solve_flagconf(t_lsflags *flags)
 {
+	struct winsize	w;
+
 	if (flags->f == 'f')
 		flags->a = 'a';
 	if (flags->l == 'l')
 		flags->n1 = '1';
+	if (flags->n1 != '1')
+	{
+		ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
+		flags->w_col = w.ws_col;
+	}
 	return ('\0');
 }
 
@@ -114,5 +124,5 @@ void	init_flags(t_lsflags *flags)
 	flags->u = '\0';
 	flags->n1 = '\0';
 	flags->rflag = '\0';
-
+	flags->w_col = 0;
 }

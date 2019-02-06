@@ -6,7 +6,7 @@
 /*   By: mnishimo <mnishimo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/31 13:45:28 by mnishimo          #+#    #+#             */
-/*   Updated: 2019/02/06 00:36:17 by mnishimo         ###   ########.fr       */
+/*   Updated: 2019/02/06 22:55:16 by mnishimo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ int	manage_path(char *path, t_lsflags *flags, char **output, char c)
 	struct dirent	*dp;
 	char			*tmp;
 
-	flags->fmt = &fmt;
+	flags->fmt = &fmt;	
 	if ((dirp = opendir(path)) == NULL)
 		return (2);
 	if (c == 'n' && ft_strcmp(".", path) != 0)
@@ -64,6 +64,33 @@ void	output_arg_files(t_list **path, char **output, t_lsflags *flags)
 	*path = dir;
 }
 
+int	prcs_first_dir(t_list **path, t_lsflags *flags, char **output)
+{
+	char	*tmp;
+
+	if (path == NULL)
+		return (0);
+	if (*path == NULL && flags->d != 'd')
+		return (manage_path(".", flags, output, 'y'));
+	if (flags->d == 'd' && flags->l == 'l' && *path == NULL)
+	{
+		*path = ft_lstnew(".", 2);
+		get_output(NULL, path, flags, output);
+		print_output(output);
+		ft_lstdel(path, &ft_ldel);
+		return (0);
+	}
+	if (flags->d == 'd' && *path == NULL)
+	{
+		ft_asprintf(&tmp, ".\n");
+		*output = ft_strjoinfree(output, &tmp, 3);
+		return (0);
+	}
+	sort_files(NULL, path, flags);
+	output_arg_files(path, output, flags);
+	return (1);
+}
+
 int	main(int argc, char **argv)
 {
 	t_lsflags	flags;
@@ -76,16 +103,14 @@ int	main(int argc, char **argv)
 	path = NULL;
 	if ((c = read_input(&flags, &path, argc, argv)) !=  '\0')
 		return (print_error("ft_ls: illegal option -- %s\n", &c, 'y'));
-	if (path == NULL)
-		return (manage_path(".", &flags, &output, 'y'));
-	sort_files(NULL, &path, &flags);
-	output_arg_files(&path, &output, &flags);
+	if (validate_input(&path) < 0 || prcs_first_dir(&path, &flags, &output) == 0)
+		return (0);
 	c = (path != NULL && path->next == NULL) ? 'y' : 'n';
 	while (path != NULL)
 	{
 		print_output(&output);
 		if (manage_path((char *)(path->content), &flags, &output, c) == 2)
-			print_error("ft_ls: %s: No such file or directory\n", (char *)path->content, 'n');
+			print_error(NULL, (char *)path->content, 'n');
 		tmp = path;
 		path = path->next;
 		free(tmp->content);

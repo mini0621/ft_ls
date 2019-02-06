@@ -6,7 +6,7 @@
 /*   By: mnishimo <mnishimo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/02 17:27:39 by mnishimo          #+#    #+#             */
-/*   Updated: 2019/02/06 00:42:39 by mnishimo         ###   ########.fr       */
+/*   Updated: 2019/02/06 23:00:19 by mnishimo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@
 int	get_output(char *path, t_list **files, t_lsflags *flags, char **output)
 {
 	t_list	*dirs;
-
 
 	if (flags->rflag != 'y' && flags->cr == 'R')
 		separate_dir(&dirs, files, path);
@@ -47,7 +46,7 @@ void	prcs_dirs(char *path, t_list **dir, t_lsflags *flags, char **output)
 		ft_printf("\n");
 		tpath = add_path(path, (char *)((*dir)->content));
 		if (manage_path(tpath, flags, output, 'n') == 2)
-			print_error("ft_ls: %s: No such file or directory\n", (char *)((*dir)->content), 'n');
+			print_error(NULL, (char *)((*dir)->content), 'n');
 		tmp = *dir;
 		free(tpath);
 		*dir = (*dir)->next;

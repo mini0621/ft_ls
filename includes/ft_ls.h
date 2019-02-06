@@ -6,7 +6,7 @@
 /*   By: mnishimo <mnishimo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/30 22:43:07 by mnishimo          #+#    #+#             */
-/*   Updated: 2019/02/06 00:37:45 by mnishimo         ###   ########.fr       */
+/*   Updated: 2019/02/06 23:05:38 by mnishimo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 # include <sys/ioctl.h>
 # include <sys/stat.h>
 # include <dirent.h>
+# include <errno.h>
 # include <grp.h>
 # include <pwd.h>
 # include <uuid/uuid.h>
@@ -39,6 +40,7 @@ typedef struct	s_fmt
 typedef struct	s_lsflags
 {
 	t_fmt	*fmt;
+	unsigned short	w_col;
 	char	r;
 	char	l;
 	char	a;
@@ -53,12 +55,14 @@ typedef struct	s_lsflags
 
 typedef struct	s_file
 {
-	char	*d_name;
-	time_t	st_time;
+	char		*d_name;
+	struct stat	stat;
+	time_t		st_time;
 }				t_file;
 
 int				manage_path(char *path, t_lsflags *flags, char **output, char c);
 void			output_arg_files(t_list **path, char **output, t_lsflags *flags);
+int	prcs_first_dir(t_list **path, t_lsflags *flags, char **output);
 
 int				store_dp(DIR *dirp, t_list **files, t_fmt *fmt, t_lsflags *flags);
 int				search_file(t_lsflags *flags, char *name, char **output);
@@ -74,7 +78,7 @@ int				get_output(char *path, t_list **files, t_lsflags *flags, char **output);
 char 			solve_flagconf(t_lsflags *flags);
 int 			store_flag(t_lsflags *flags, char c);
 char			read_input(t_lsflags *flags, t_list **path, int argc, char **argv);
-void			validate_input(t_list **path);
+int				validate_input(t_list **path);
 void    		init_flags(t_lsflags *flags);
 
 char			*add_path(char *path, char *name);
@@ -82,12 +86,12 @@ char			*add_path(char *path, char *name);
 void			prcs_files_l(char *path, t_list **files, t_lsflags *flags, char **output);
 char			*fmt_lnk(char *path, char *d_name, struct stat *stat, char **ret);
 char			*fmt_reg(char *path, char *d_name, struct stat *stat, t_lsflags *flags);
-char	*fmt_attr(mode_t mode, char type);
+char			*fmt_attr(mode_t mode, char type);
 
-off_t	get_fmt(char *path, t_list *files, t_lsflags *flags, t_fmt *fmt);
+blkcnt_t	get_fmt(char *path, t_list *files, t_lsflags *flags, t_fmt *fmt);
 void	get_fmt_name(t_list	*files, t_lsflags *flags, t_fmt *fmt);
 void    init_fmt(t_fmt *fmt);
-off_t   fmt_cmp(t_fmt *fmt, struct stat *stat);
+blkcnt_t   fmt_cmp(t_fmt *fmt, struct stat *stat);
 void 			sort_files(char *path, t_list **files, t_lsflags *flags);
 void			sort_by_name(t_list **files, char r);
 void	sort_by_time(char *path, t_list **files, char r, t_lsflags *flags);

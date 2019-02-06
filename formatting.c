@@ -6,7 +6,7 @@
 /*   By: mnishimo <mnishimo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/02 19:01:40 by mnishimo          #+#    #+#             */
-/*   Updated: 2019/02/05 20:00:47 by mnishimo         ###   ########.fr       */
+/*   Updated: 2019/02/06 23:06:20 by mnishimo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@
 
 void	get_fmt_name(t_list	*files, t_lsflags *flags, t_fmt *fmt)
 {
-	struct winsize	w;
 	t_list			*cur;
 
 	if (flags->n1 == '1')
@@ -23,7 +22,6 @@ void	get_fmt_name(t_list	*files, t_lsflags *flags, t_fmt *fmt)
 		fmt->row = fmt->len;
 		return ;
 	}
-	ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
 	if (fmt->len == 0 || fmt->name == 0)
 	{
 		cur = files;
@@ -36,15 +34,15 @@ void	get_fmt_name(t_list	*files, t_lsflags *flags, t_fmt *fmt)
 		}
 	}
 	if (fmt->len != 0 && fmt->name != 0)
-		fmt->row = 1 + fmt->len / (w.ws_col / fmt->name);
+		fmt->row = 1 + fmt->len / (flags->w_col / fmt->name);
 }
 
-off_t	get_fmt(char *path, t_list *files, t_lsflags *flags, t_fmt *fmt)
+blkcnt_t	get_fmt(char *path, t_list *files, t_lsflags *flags, t_fmt *fmt)
 {
 	t_list		*cur;
 	t_list		*ptr;
 	char		*tpath;
-	off_t		size;
+	blkcnt_t		size;
 	struct stat	sttbuff;
 
 	cur = files;
@@ -69,7 +67,7 @@ void	init_fmt(t_fmt *fmt)
 	fmt->size = 0;
 }
 
-off_t	fmt_cmp(t_fmt *fmt, struct stat *stat)
+blkcnt_t	fmt_cmp(t_fmt *fmt, struct stat *stat)
 {
 	size_t len;
 	nlink_t	nlink;
@@ -97,5 +95,5 @@ off_t	fmt_cmp(t_fmt *fmt, struct stat *stat)
 	}
 	if (len > fmt->size)
 		fmt->size = len;
-	return (stat->st_size);
+	return (stat->st_blocks);
 }
