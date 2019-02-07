@@ -1,7 +1,8 @@
 NAME = ft_ls
 
 CC = gcc 
-CFLAGS = -Wall -Werror -Wextra
+#CFLAGS = -Wall -Werror -Wextra -g
+CFLAGS = -fsanitize=address -g
 
 INCLUDES = ./includes/
 LDIR = libftprintf/
@@ -26,7 +27,7 @@ $(LIBFT):
 	make -C libftprintf/
 
 %.o: %.c
-	$(CC) -I $(INCLUDES) -o $@ -c $<  
+	$(CC) $(CFLAGS) -I $(INCLUDES) -o $@ -c $<  
 
 $(NAME):  $(LIBFT) $(OBJ)
 	$(CC) $(CFLAGS)  -o $(NAME) $(OBJ) -L $(LDIR) $(LIB) -I$(INCLUDES)

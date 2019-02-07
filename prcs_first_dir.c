@@ -6,7 +6,7 @@
 /*   By: mnishimo <mnishimo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/31 22:08:26 by mnishimo          #+#    #+#             */
-/*   Updated: 2019/02/07 01:07:16 by mnishimo         ###   ########.fr       */
+/*   Updated: 2019/02/07 20:24:13 by mnishimo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,8 +23,8 @@ int	store_dp(char *path, DIR *dirp, t_list **files, t_lsflags *flags)
 	len = 0;
 	blkcnt = 0;
 	*files = NULL;
-	while (!(dp = skip_hid_files(dirp, flags->a))
-		&& !(tpath = add_path(path, dp->d_name)))
+	while ((dp = skip_hid_files(dirp, flags->a)) != NULL
+		&& (tpath = add_path(path, dp->d_name)) != NULL)
 	{	
 		get_newfile(files, &last, tpath, dp->d_name);
 		if (flags->n1 != '1')
@@ -35,9 +35,9 @@ int	store_dp(char *path, DIR *dirp, t_list **files, t_lsflags *flags)
 		len++;
 	}
 	flags->fmt->len = len + add_homedir(flags->a, files);
-	if (flags->n1 != '1' && flags->l != 'l')
+	if (flags->n1 == '1' || flags->l == 'l')
 		flags->fmt->name = 1;
-	flags->fmt->row = (flags->n1 != '1') ?
+	flags->fmt->row = (flags->n1 != '1' && *files != NULL) ?
 	1 + flags->fmt->len / (flags->w_col / flags->fmt->name) : flags->fmt->len;
 	return (0);
 }
@@ -81,6 +81,8 @@ int	search_file(t_lsflags *flags, char *name, char **output)
 	char			*path;
 	int				i;
 
+	(void)output;
+	(void)flags;
 	i = ft_strlen(name) - 1;
 	while (i > -1 && name[i] != '/')
 		i--;

@@ -6,7 +6,7 @@
 /*   By: mnishimo <mnishimo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/30 22:43:07 by mnishimo          #+#    #+#             */
-/*   Updated: 2019/02/07 01:07:44 by mnishimo         ###   ########.fr       */
+/*   Updated: 2019/02/07 20:26:04 by mnishimo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,8 +103,9 @@ t_list	*sort_hid_files(t_list *files, t_list *sorted, t_list **cur);
 int				print_output(char **output);
 int				print_error(char *message, char *ver, char usage);
 
-time_t			get_time(char *path, char *name, t_lsflags *flags);
+time_t			get_time(t_list *cur, t_lsflags *flags);
 
 void			ft_ldel(void *ptr, size_t size);
+void			ft_chardel(void *ptr, size_t size);
 t_list			**re_list(t_list **path, t_fmt *fmt, t_lsflags *flags);
 #endif

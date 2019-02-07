@@ -2,7 +2,7 @@ NAME = libftprintf.a
 
 CC = gcc 
 
-CFLAGS = -Wall -Werror -Wextra
+CFLAGS = -Wall -Werror -Wextra -g
 
 INCLUDES = ./../includes
 

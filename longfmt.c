@@ -6,7 +6,7 @@
 /*   By: mnishimo <mnishimo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/01 18:20:25 by mnishimo          #+#    #+#             */
-/*   Updated: 2019/02/07 00:59:11 by mnishimo         ###   ########.fr       */
+/*   Updated: 2019/02/07 19:04:01 by mnishimo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,6 @@ void	prcs_files_l(char *path, t_list **files, t_lsflags *flags, char **output)
 		if (tmp == NULL)
 			return ;
 		*output = ft_strjoinfree(output, &tmp, 3);
-		ft_strdel(&tpath);
 		cur = cur->next;
 	}
 }

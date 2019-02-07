@@ -6,7 +6,7 @@
 /*   By: mnishimo <mnishimo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/31 13:45:28 by mnishimo          #+#    #+#             */
-/*   Updated: 2019/02/07 00:53:29 by mnishimo         ###   ########.fr       */
+/*   Updated: 2019/02/07 21:50:52 by mnishimo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@ int	manage_path(char *path, t_lsflags *flags, char **output, char c)
 	t_fmt			fmt;
 	char			*tmp;
 
+	files = NULL;
 	if ((dirp = opendir(path)) == NULL)
 		return (2);
 	if (c == 'n' && ft_strcmp(".", path) != 0)
@@ -28,11 +29,10 @@ int	manage_path(char *path, t_lsflags *flags, char **output, char c)
 	}
 	flags->fmt = &fmt;
 	init_fmt(&fmt);
-	if (store_dp(dirp, &files, &fmt, flags) < 0)
+	if (store_dp(path, dirp, &files, flags) < 0)
 		return (2);
 	sort_files(path, &files, flags);
 	get_output(path, &files, flags, output);
-	ft_lstdel(&files, &ft_ldel);
 	closedir(dirp);
 	return (0);
 }
@@ -50,7 +50,7 @@ void	output_arg_files(t_list **path, char **output, t_lsflags *flags)
 		prcs_files_l(NULL, path, flags, output);
 	else
 		prcs_files(path, flags, output, flags->fmt);
-	ft_lstdel(path, &ft_ldel);
+	ft_lstdel(path, &ft_chardel);
 	*path = dir;
 }
 
@@ -63,6 +63,7 @@ int	prcs_first_dir(t_list **path, t_lsflags *flags, char **output)
 		return (0);
 	if (*path == NULL && flags->d != 'd')
 		return (manage_path(".", flags, output, 'y'));
+	init_fmt(&fmt);
 	if (flags->d == 'd' && flags->l == 'l' && *path == NULL)
 	{
 		get_newfile(path, NULL, ".", ".");
@@ -101,7 +102,7 @@ int	main(int argc, char **argv)
 	while (path != NULL)
 	{
 		print_output(&output);
-		if (manage_path((char *)(path->content), &flags, &output, c) == 2)
+		if (manage_path(((t_file *)(path->content))->d_name, &flags, &output, c) == 2)
 			print_error(NULL, (char *)path->content, 'n');
 		tmp = path;
 		path = path->next;

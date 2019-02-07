@@ -6,7 +6,7 @@
 /*   By: mnishimo <mnishimo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/02 17:27:39 by mnishimo          #+#    #+#             */
-/*   Updated: 2019/02/07 01:07:42 by mnishimo         ###   ########.fr       */
+/*   Updated: 2019/02/07 22:38:45 by mnishimo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@ int	get_output(char *path, t_list **files, t_lsflags *flags, char **output)
 {
 	t_list	*dirs;
 
+	dirs = NULL;
 	if (flags->rflag != 'y' && flags->cr == 'R')
 		separate_dir(&dirs, files, path);
 	else if (flags->rflag == 'y')
@@ -24,13 +25,10 @@ int	get_output(char *path, t_list **files, t_lsflags *flags, char **output)
 		prcs_files_l(path, files, flags, output);
 	else
 		prcs_files(files, flags, output, flags->fmt);
+	ft_lstdel(files, &ft_ldel);
 	print_output(output);
 	if (flags->cr == 'R')
-	{
 		prcs_dirs(path, &dirs, flags, output);
-		ft_lstdel(&dirs, &ft_ldel);
-	}
-	ft_lstdel(files, &ft_ldel);
 	return (1);
 }
 
@@ -44,9 +42,9 @@ void	prcs_dirs(char *path, t_list **dir, t_lsflags *flags, char **output)
 	{
 		print_output(output);
 		ft_printf("\n");
-		tpath = add_path(path, ((t_file *)((*dir)->content)->d_name));
+		tpath = add_path(path, (((t_file *)((*dir)->content))->d_name));
 		if (manage_path(tpath, flags, output, 'n') == 2)
-			print_error(NULL, ((t_file *)((*dir)->content)->d_name), 'n');
+			print_error(NULL, (((t_file *)((*dir)->content))->d_name), 'n');
 		tmp = *dir;
 		free(tpath);
 		*dir = (*dir)->next;
@@ -99,7 +97,7 @@ t_list	*separate_dir(t_list **dirs, t_list **files, char *path)
 	while (cur != NULL)
 	{
 		if(ft_strcmp(((t_file *)(cur->content))->d_name, ".") != 0
-			&& (((t_file *)(cur->content)).stat.st_mode & S_IFMT) == S_IFDIR)
+			&& (((t_file *)(cur->content))->stat.st_mode & S_IFMT) == S_IFDIR)
 		{
 			ptr = cur;
 			cur = cur->next;
@@ -124,13 +122,15 @@ t_list	*duplicate_dir(t_list **dirs, t_list **files, char *path)
 	while (cur)
 	{
 		if(ft_strcmp(((t_file *)(cur->content))->d_name, ".") != 0
-			&& (((t_file *)(cur->content)).stat.st_mode & S_IFMT) == S_IFDIR)
+			&& (((t_file *)(cur->content))->stat.st_mode & S_IFMT) == S_IFDIR)
 		{
 			if ((ptr = ft_lstnew(cur->content, cur->content_size)) != NULL)
+			{
+				((t_file *)(ptr->content))->d_name = strdup(((t_file *)(ptr->content))->d_name);
 				ft_lstpushback(dirs, ptr);
+			}
 		}
 		cur = cur->next;
-		ft_strdel(&tpath);
 	}
 	return (*dirs);
 }

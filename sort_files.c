@@ -6,7 +6,7 @@
 /*   By: mnishimo <mnishimo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/31 22:17:03 by mnishimo          #+#    #+#             */
-/*   Updated: 2019/02/07 00:42:58 by mnishimo         ###   ########.fr       */
+/*   Updated: 2019/02/07 20:07:25 by mnishimo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,11 +91,11 @@ void	sort_by_time(char *path, t_list **files, char r, t_lsflags *flags)
 	cur = *files;
 	while (cur->next != NULL)
 	{
-		val = get_time(path, cur, flags);
+		val = get_time(cur, flags);
 		index = NULL;
 		while (cur->next != NULL)
 		{
-			ret = get_time(path, cur->next, flags);
+			ret = get_time(cur->next, flags);
 			if ((r == 'r' && ret > val) || (r != 'r' && ret < val))
 				index = cur;
 			cur = cur->next;

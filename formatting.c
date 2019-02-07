@@ -6,7 +6,7 @@
 /*   By: mnishimo <mnishimo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/02 19:01:40 by mnishimo          #+#    #+#             */
-/*   Updated: 2019/02/07 01:07:39 by mnishimo         ###   ########.fr       */
+/*   Updated: 2019/02/07 19:13:46 by mnishimo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,8 @@
 void	get_fmt_name(char *d_name, t_fmt *fmt)
 {
 	int	len;
-
+	if (fmt == NULL || d_name == NULL)
+		return ;
 	len = ft_strlen(d_name);
 	if (len > fmt->name)
 		fmt->name = len;
@@ -23,6 +24,9 @@ void	get_fmt_name(char *d_name, t_fmt *fmt)
 
 void	init_fmt(t_fmt *fmt)
 {
+	fmt->name = 0;
+	fmt->row = 0;
+	fmt->len = 0;
 	fmt->nlink = 0;
 	fmt->user = 0;
 	fmt->group = 0;
