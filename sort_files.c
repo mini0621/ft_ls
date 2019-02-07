@@ -6,7 +6,7 @@
 /*   By: mnishimo <mnishimo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/31 22:17:03 by mnishimo          #+#    #+#             */
-/*   Updated: 2019/02/04 17:34:07 by mnishimo         ###   ########.fr       */
+/*   Updated: 2019/02/07 00:42:58 by mnishimo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,9 +41,9 @@ void	sort_by_name(t_list **files, char r)
 		while (cur->next != NULL)
 		{
 			if (index == NULL)
-				ret =  ft_strcmp((char *)(cur->next->content), (char *)(tmp->content));
+				ret =  ft_strcmp(((t_file *)(cur->next->content))->d_name, ((t_file *)(tmp->content))->d_name);
 			else
-				ret = ft_strcmp((char *)(cur->next->content), (char *)(index->next->content));
+				ret =  ft_strcmp(((t_file *)(cur->next->content))->d_name, ((t_file *)(index->next->content))->d_name);
 			if ((r == 'r' && ret > 0) || (r != 'r' && ret < 0))
 				index = cur;
 			cur = cur->next;
@@ -91,11 +91,11 @@ void	sort_by_time(char *path, t_list **files, char r, t_lsflags *flags)
 	cur = *files;
 	while (cur->next != NULL)
 	{
-		val = get_time(path, (char *)(cur->content), flags);
+		val = get_time(path, cur, flags);
 		index = NULL;
 		while (cur->next != NULL)
 		{
-			ret = get_time(path, (char *)(cur->next->content), flags);
+			ret = get_time(path, cur->next, flags);
 			if ((r == 'r' && ret > val) || (r != 'r' && ret < val))
 				index = cur;
 			cur = cur->next;

@@ -6,7 +6,7 @@
 /*   By: mnishimo <mnishimo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/31 13:45:28 by mnishimo          #+#    #+#             */
-/*   Updated: 2019/02/06 22:55:16 by mnishimo         ###   ########.fr       */
+/*   Updated: 2019/02/07 00:53:29 by mnishimo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,10 +17,8 @@ int	manage_path(char *path, t_lsflags *flags, char **output, char c)
 	DIR				*dirp;
 	t_list			*files;
 	t_fmt			fmt;
-	struct dirent	*dp;
 	char			*tmp;
 
-	flags->fmt = &fmt;	
 	if ((dirp = opendir(path)) == NULL)
 		return (2);
 	if (c == 'n' && ft_strcmp(".", path) != 0)
@@ -28,6 +26,8 @@ int	manage_path(char *path, t_lsflags *flags, char **output, char c)
 		ft_asprintf(&tmp, "%s:\n", path);
 		*output = ft_strjoinfree(output, &tmp, 3);
 	}
+	flags->fmt = &fmt;
+	init_fmt(&fmt);
 	if (store_dp(dirp, &files, &fmt, flags) < 0)
 		return (2);
 	sort_files(path, &files, flags);
@@ -41,25 +41,15 @@ void	output_arg_files(t_list **path, char **output, t_lsflags *flags)
 {
 	t_list		*cur;
 	t_list		*dir;
-	struct stat	stat;
-	t_fmt		fmt;
 
-	fmt.len = 0;
-	fmt.name = 0;
 	dir = NULL;
 	cur = *path;
 	if (flags->d != 'd')
 		separate_dir(&dir, path, NULL);
 	if (flags->l == 'l')
-	{
-		get_fmt(NULL, *path, flags, &fmt);
 		prcs_files_l(NULL, path, flags, output);
-	}
 	else
-	{
-		get_fmt_name(*path, flags, &fmt);
-		prcs_files(path, flags, output, &fmt);
-	}
+		prcs_files(path, flags, output, flags->fmt);
 	ft_lstdel(path, &ft_ldel);
 	*path = dir;
 }
@@ -67,6 +57,7 @@ void	output_arg_files(t_list **path, char **output, t_lsflags *flags)
 int	prcs_first_dir(t_list **path, t_lsflags *flags, char **output)
 {
 	char	*tmp;
+	t_fmt	fmt;
 
 	if (path == NULL)
 		return (0);
@@ -74,7 +65,7 @@ int	prcs_first_dir(t_list **path, t_lsflags *flags, char **output)
 		return (manage_path(".", flags, output, 'y'));
 	if (flags->d == 'd' && flags->l == 'l' && *path == NULL)
 	{
-		*path = ft_lstnew(".", 2);
+		get_newfile(path, NULL, ".", ".");
 		get_output(NULL, path, flags, output);
 		print_output(output);
 		ft_lstdel(path, &ft_ldel);
@@ -86,7 +77,8 @@ int	prcs_first_dir(t_list **path, t_lsflags *flags, char **output)
 		*output = ft_strjoinfree(output, &tmp, 3);
 		return (0);
 	}
-	sort_files(NULL, path, flags);
+	sort_files(NULL, re_list(path, &fmt, flags), flags);
+	flags->fmt = &fmt;
 	output_arg_files(path, output, flags);
 	return (1);
 }
@@ -113,8 +105,7 @@ int	main(int argc, char **argv)
 			print_error(NULL, (char *)path->content, 'n');
 		tmp = path;
 		path = path->next;
-		free(tmp->content);
-		free(tmp);
+		ft_lstdelone(&tmp, &ft_ldel);
 		if (path != NULL)
 			ft_printf("\n");
 	}

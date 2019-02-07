@@ -6,39 +6,60 @@
 /*   By: mnishimo <mnishimo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/31 22:08:26 by mnishimo          #+#    #+#             */
-/*   Updated: 2019/02/06 23:01:37 by mnishimo         ###   ########.fr       */
+/*   Updated: 2019/02/07 01:07:16 by mnishimo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_ls.h"
 
-int	store_dp(DIR *dirp, t_list **files, t_fmt *fmt, t_lsflags *flags)
+int	store_dp(char *path, DIR *dirp, t_list **files, t_lsflags *flags)
 {
-	t_list			*new;
 	struct dirent	*dp;
 	t_list			*last;
 	int				len;
-	size_t			name;
+	char			*tpath;
+	blkcnt_t		blkcnt;
 
-	*files = NULL;
 	len = 0;
-	name = 0;
-	while ((dp = skip_hid_files(dirp, flags->a)) != NULL)
-	{
-		if (!(new = ft_lstnew(dp->d_name, sizeof(char) * (ft_strlen(dp->d_name) + 1))))
-			return (-1);
-		if (*files == NULL)
-			*files = new;
-		else
-			last->next = new;
-		last = new;
-		if (new->content_size > name)
-			name = new->content_size;
+	blkcnt = 0;
+	*files = NULL;
+	while (!(dp = skip_hid_files(dirp, flags->a))
+		&& !(tpath = add_path(path, dp->d_name)))
+	{	
+		get_newfile(files, &last, tpath, dp->d_name);
+		if (flags->n1 != '1')
+			get_fmt_name(dp->d_name, flags->fmt);
+		if (flags->l == 'l')
+			blkcnt += fmt_cmp(flags->fmt, &(((t_file *)(last->content))->stat));
+		ft_strdel(&tpath);
 		len++;
 	}
-	fmt->name = name;
-	fmt->len = len + add_homedir(flags->a, files);
+	flags->fmt->len = len + add_homedir(flags->a, files);
+	if (flags->n1 != '1' && flags->l != 'l')
+		flags->fmt->name = 1;
+	flags->fmt->row = (flags->n1 != '1') ?
+	1 + flags->fmt->len / (flags->w_col / flags->fmt->name) : flags->fmt->len;
 	return (0);
+}
+
+t_list	*get_newfile(t_list **files, t_list **last, char *path, char *d_name)
+{
+	t_list	*new;
+	t_file	file;
+
+	if (lstat(path, &(file.stat)) != 0 || (file.d_name = ft_strdup(d_name)) == NULL)
+		return (NULL);
+	if (!(new = ft_lstnew(&file, sizeof(file))))
+	{
+		free(file.d_name);
+		print_error(NULL, d_name, 'n');
+	}
+	if (*files == NULL)
+		*files = new;
+	else
+		(*last)->next = new;
+	*last = new;
+	return (new);
 }
 
 int		add_homedir(char a, t_list **files)

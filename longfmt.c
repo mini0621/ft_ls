@@ -6,7 +6,7 @@
 /*   By: mnishimo <mnishimo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/01 18:20:25 by mnishimo          #+#    #+#             */
-/*   Updated: 2019/02/06 21:51:05 by mnishimo         ###   ########.fr       */
+/*   Updated: 2019/02/07 00:59:11 by mnishimo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,22 +14,20 @@
 
 void	prcs_files_l(char *path, t_list **files, t_lsflags *flags, char **output)
 {
-	t_fmt	fmt;
 	char	*tmp;
 	t_list	*cur;
-	char	*tpath;
-	struct stat	stat;
 
 	if (files == NULL || *files == NULL)
 		return ;
-	ft_asprintf(&tmp, "total %llu\n", get_fmt(path, *files, flags, &fmt));
-	*output = ft_strjoinfree(output, &tmp, 3);
-	cur = *files;
-	flags->fmt = &fmt;	
-	while (cur && (tpath = add_path(path, (char *)(cur->content))) != NULL
-		&& lstat(tpath, &stat) == 0)
+	if (flags->fmt->blkcnt != -1)
 	{
-		tmp = fmt_reg(path, (char *)(cur->content), &stat, flags);
+		ft_asprintf(&tmp, "total %llu\n", flags->fmt->blkcnt);
+		*output = ft_strjoinfree(output, &tmp, 3);
+	}
+	cur = *files;
+	while (cur)
+	{
+		tmp = fmt_reg(path, ((t_file *)(cur->content))->d_name, &(((t_file *)(cur->content))->stat), flags);
 		if (tmp == NULL)
 			return ;
 		*output = ft_strjoinfree(output, &tmp, 3);

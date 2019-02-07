@@ -6,57 +6,19 @@
 /*   By: mnishimo <mnishimo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/02 19:01:40 by mnishimo          #+#    #+#             */
-/*   Updated: 2019/02/06 23:06:20 by mnishimo         ###   ########.fr       */
+/*   Updated: 2019/02/07 01:07:39 by mnishimo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_ls.h"
 
-void	get_fmt_name(t_list	*files, t_lsflags *flags, t_fmt *fmt)
+void	get_fmt_name(char *d_name, t_fmt *fmt)
 {
-	t_list			*cur;
+	int	len;
 
-	if (flags->n1 == '1')
-	{
-		fmt->name = 1;
-		fmt->row = fmt->len;
-		return ;
-	}
-	if (fmt->len == 0 || fmt->name == 0)
-	{
-		cur = files;
-		while (cur != NULL)
-		{
-			if (cur->content_size > fmt->name)
-				fmt->name = cur->content_size;
-			fmt->len += 1;
-			cur = cur->next;
-		}
-	}
-	if (fmt->len != 0 && fmt->name != 0)
-		fmt->row = 1 + fmt->len / (flags->w_col / fmt->name);
-}
-
-blkcnt_t	get_fmt(char *path, t_list *files, t_lsflags *flags, t_fmt *fmt)
-{
-	t_list		*cur;
-	t_list		*ptr;
-	char		*tpath;
-	blkcnt_t		size;
-	struct stat	sttbuff;
-
-	cur = files;
-	size = 0;
-	init_fmt(fmt);
-	get_fmt_name(files, flags, fmt);
-	while (cur && (tpath = add_path(path, (char *)(cur->content))) != NULL
-			&& lstat(tpath, &sttbuff) == 0)
-	{
-		size += fmt_cmp(fmt, &sttbuff);
-		cur = cur->next;
-		ft_strdel(&tpath);
-	}
-	return (size);
+	len = ft_strlen(d_name);
+	if (len > fmt->name)
+		fmt->name = len;
 }
 
 void	init_fmt(t_fmt *fmt)
@@ -65,6 +27,7 @@ void	init_fmt(t_fmt *fmt)
 	fmt->user = 0;
 	fmt->group = 0;
 	fmt->size = 0;
+	fmt->blkcnt = -1;
 }
 
 blkcnt_t	fmt_cmp(t_fmt *fmt, struct stat *stat)

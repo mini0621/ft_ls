@@ -6,7 +6,7 @@
 /*   By: mnishimo <mnishimo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/31 18:43:47 by mnishimo          #+#    #+#             */
-/*   Updated: 2019/02/06 00:38:14 by mnishimo         ###   ########.fr       */
+/*   Updated: 2019/02/07 01:01:28 by mnishimo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,38 +14,38 @@
 
 void	ft_ldel(void *ptr, size_t size)
 {
-	if (ptr == NULL)
+	if (ptr == NULL || size == 0)
 		return ;
-	free((char *)ptr);
+	free(((t_file *)ptr)->d_name);
 }
-/*
-t_list	*re_list_time(char *path, t_list **files)
-{
-	t_list	*new;
-	t_file	file;
-	t_list	*cur;
-	t_list	*last;
-	t_list	*new_files;
 
-	new_files = NULL;
-	cur = *files;
-	while (cur != NULL)
+t_list	**re_list(t_list **path, t_fmt *fmt, t_lsflags *flags)
+{
+	t_list	*cur;
+	t_list	*pre;
+	t_list	*tmp;
+	t_list	*last;
+	int		len;
+
+	len = 0;
+	cur = *path;
+	while (cur)
 	{
-		if (get_file(path, (char *)(cur->content), &file) == -1
-			|| (new = ft_lstnew(&file, sizeof(t_file))) == NULL)
-			return (new_files);
-		if (new_files == NULL)
-		{
-			new_files = new;
-			last = new_files;
-		}
-		else
-		{
-			last->next = new;
-			last = last->next;
-		}
+		get_newfile(&tmp, &last, (char *)((*path)->content),
+			(char *)((*path)->content));
+		get_fmt_name(((t_file *)(last->content))->d_name, flags->fmt);
+		if (flags->l == 'l')
+			fmt_cmp(flags->fmt,
+				&(((t_file *)(last->content))->stat));
+		pre = cur;
 		cur = cur->next;
 	}
-	return (new_files);
+	ft_lstdel(path, &ft_ldel);
+	fmt->len = len;
+	if (flags->n1 != '1' && flags->l != 'l')
+		flags->fmt->name = 1;
+	fmt->row = (flags->n1 != '1') ?
+	1 + fmt->len / (flags->w_col / fmt->name) : fmt->len;
+	*path = tmp;
+	return (path);
 }
-*/
