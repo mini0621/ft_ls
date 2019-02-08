@@ -1,7 +1,7 @@
 NAME = ft_ls
 
 CC = gcc 
-CFLAGS = -Wall -Werror -Wextra -g
+#CFLAGS = -Wall -Werror -Wextra -g
 #CFLAGS = -fsanitize=address -g
 
 INCLUDES = ./includes/

@@ -6,13 +6,13 @@
 /*   By: mnishimo <mnishimo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/02 17:27:39 by mnishimo          #+#    #+#             */
-/*   Updated: 2019/02/08 18:48:08 by mnishimo         ###   ########.fr       */
+/*   Updated: 2019/02/08 20:09:32 by mnishimo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_ls.h"
 
-int	get_output(char *path, t_list **files, t_lsflags *flags, char **output)
+int	get_output(char *path, t_list **files, t_lsflags *flags)
 {
 	t_list	*dirs;
 
@@ -22,17 +22,16 @@ int	get_output(char *path, t_list **files, t_lsflags *flags, char **output)
 	else if (flags->rflag == 'y')
 		duplicate_dir(&dirs, files);
 	if (flags->l == 'l')
-		prcs_files_l(path, files, flags, output);
+		prcs_files_l(path, files, flags);
 	else
-		prcs_files(files, flags, output, flags->fmt);
+		prcs_files(files, flags, flags->fmt);
 	ft_lstdel(files, &ft_ldel);
-	print_output(output);
 	if (flags->cr == 'R')
-		prcs_dirs(path, &dirs, flags, output);
+		prcs_dirs(path, &dirs, flags);
 	return (1);
 }
 
-void	prcs_dirs(char *path, t_list **dir, t_lsflags *flags, char **output)
+void	prcs_dirs(char *path, t_list **dir, t_lsflags *flags)
 {
 	t_list	*tmp;
 	char	*tpath;
@@ -40,20 +39,18 @@ void	prcs_dirs(char *path, t_list **dir, t_lsflags *flags, char **output)
 	flags->rflag = 'y';
 	while (*dir != NULL)
 	{
-		print_output(output);
 		ft_printf("\n");
 		tpath = add_path(path, (((t_file *)((*dir)->content))->d_name));
-		if (manage_path(tpath, flags, output, 'n') == 2)
+		if (manage_path(tpath, flags, 'n') == 2)
 			print_error(NULL, (((t_file *)((*dir)->content))->d_name), 'n');
 		tmp = *dir;
 		free(tpath);
 		*dir = (*dir)->next;
 		ft_lstdelone(&tmp, &ft_ldel);
 	}
-	//print_output(output);
 }
 
-void	prcs_files(t_list **files, t_lsflags *flags, char **output, t_fmt *fmt)
+void	prcs_files(t_list **files, t_lsflags *flags, t_fmt *fmt)
 {
 	t_list	*cur;
 	int		mod;
@@ -71,16 +68,12 @@ void	prcs_files(t_list **files, t_lsflags *flags, char **output, t_fmt *fmt)
 		if (cur == NULL)
 		{
 			i = 0;
+			ft_printf("\n");
 			cur = *files;
-			ft_asprintf(&tmp, "\n");
-			*output = ft_strjoinfree(output, &tmp, 3);
 			mod++;
 		}
 		if (i % fmt->row == mod)
-		{
-			ft_asprintf(&tmp, "%-*s", fmt->name, ((t_file *)(cur->content))->d_name);
-			*output = ft_strjoinfree(output, &tmp, 3);
-		}
+			ft_printf("%-*s", fmt->name, ((t_file *)(cur->content))->d_name);
 		cur = cur->next;
 		i++;
 	}
@@ -99,8 +92,8 @@ t_list	*separate_dir(t_list **dirs, t_list **files, char *path)
 	while (cur != NULL)
 	{
 		if((path == NULL || (ft_strcmp(((t_file *)(cur->content))->d_name, ".") != 0
-			&& ft_strcmp(((t_file *)(cur->content))->d_name, "..") != 0))
-			&& (((t_file *)(cur->content))->stat.st_mode & S_IFMT) == S_IFDIR)
+						&& ft_strcmp(((t_file *)(cur->content))->d_name, "..") != 0))
+				&& (((t_file *)(cur->content))->stat.st_mode & S_IFMT) == S_IFDIR)
 		{
 			ptr = cur;
 			cur = cur->next;
@@ -130,8 +123,8 @@ t_list	*duplicate_dir(t_list **dirs, t_list **files)
 	while (cur)
 	{
 		if((ft_strcmp(((t_file *)(cur->content))->d_name, ".") != 0
-			&& ft_strcmp(((t_file *)(cur->content))->d_name, "..") != 0)
-			&& (((t_file *)(cur->content))->stat.st_mode & S_IFMT) == S_IFDIR)
+					&& ft_strcmp(((t_file *)(cur->content))->d_name, "..") != 0)
+				&& (((t_file *)(cur->content))->stat.st_mode & S_IFMT) == S_IFDIR)
 		{
 			if ((ptr = ft_lstnew(cur->content, cur->content_size)) != NULL)
 			{

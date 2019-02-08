@@ -6,7 +6,7 @@
 /*   By: mnishimo <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/12/13 20:06:42 by mnishimo          #+#    #+#             */
-/*   Updated: 2019/01/18 08:36:02 by mnishimo         ###   ########.fr       */
+/*   Updated: 2019/02/08 19:15:19 by mnishimo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 int		ft_asprintf(char **ret, const char *fmt, ...)
 {
 	va_list		ap;
+	char		*tmp;
 	size_t		len;
 	char		*start;
 
@@ -23,19 +24,20 @@ int		ft_asprintf(char **ret, const char *fmt, ...)
 	va_start(ap, fmt);
 	start = (char *)fmt;
 	len = 0;
-	*ret = NULL;
+	tmp = NULL;
 	if (*fmt == '\0')
 		return (0);
-	if ((start = join_chars(ret, start, &len)) == NULL)
-		return (asprinterror(ret));
+	if ((start = join_chars(&tmp, start, &len)) == NULL)
+		return (asprinterror(&tmp));
 	while (*start != '\0')
 	{
-		if ((*ret = join_cnvrt(ret, &start, &ap, &len)) == NULL)
+		if ((tmp = join_cnvrt(&tmp, &start, &ap, &len)) == NULL)
 			return (-1);
-		if ((start = join_chars(ret, start, &len)) == NULL)
-			return (asprinterror(ret));
+		if ((start = join_chars(&tmp, start, &len)) == NULL)
+			return (asprinterror(&tmp));
 	}
 	va_end(ap);
+	*ret = tmp;
 	return (len);
 }
 
