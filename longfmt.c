@@ -6,7 +6,7 @@
 /*   By: mnishimo <mnishimo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/01 18:20:25 by mnishimo          #+#    #+#             */
-/*   Updated: 2019/02/07 19:04:01 by mnishimo         ###   ########.fr       */
+/*   Updated: 2019/02/08 16:24:34 by mnishimo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@ void	prcs_files_l(char *path, t_list **files, t_lsflags *flags, char **output)
 
 	if (files == NULL || *files == NULL)
 		return ;
+	get_fmt(files, flags->fmt, flags);
 	if (flags->fmt->blkcnt != -1)
 	{
 		ft_asprintf(&tmp, "total %llu\n", flags->fmt->blkcnt);

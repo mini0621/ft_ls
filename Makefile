@@ -1,8 +1,8 @@
 NAME = ft_ls
 
 CC = gcc 
-#CFLAGS = -Wall -Werror -Wextra -g
-CFLAGS = -fsanitize=address -g
+CFLAGS = -Wall -Werror -Wextra
+#CFLAGS = -fsanitize=address -g
 
 INCLUDES = ./includes/
 LDIR = libftprintf/

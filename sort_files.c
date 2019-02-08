@@ -6,18 +6,18 @@
 /*   By: mnishimo <mnishimo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/31 22:17:03 by mnishimo          #+#    #+#             */
-/*   Updated: 2019/02/07 20:07:25 by mnishimo         ###   ########.fr       */
+/*   Updated: 2019/02/08 17:38:05 by mnishimo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_ls.h"
 
-void sort_files(char *path, t_list **files, t_lsflags *flags)
+void sort_files(t_list **files, t_lsflags *flags)
 {
 	if (files == NULL || *files == NULL || flags->f == 'f')
 		return ;
 	if (flags->t == 't' || flags->u == 'u')
-		sort_by_time(path, files, flags->r, flags);
+		sort_by_time(files, flags->r, flags);
 	else
 		sort_by_name(files, flags->r);
 }
@@ -76,7 +76,7 @@ t_list	*insertion_sort(t_list **head, t_list *index, t_list **sorted, t_list *cu
 	*sorted = (*sorted)->next;
 	return ((*sorted)->next);
 }
-void	sort_by_time(char *path, t_list **files, char r, t_lsflags *flags)
+void	sort_by_time(t_list **files, char r, t_lsflags *flags)
 {
 	t_list	*sorted;
 	t_list	*index;

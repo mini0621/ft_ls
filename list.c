@@ -6,7 +6,7 @@
 /*   By: mnishimo <mnishimo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/31 18:43:47 by mnishimo          #+#    #+#             */
-/*   Updated: 2019/02/07 20:25:29 by mnishimo         ###   ########.fr       */
+/*   Updated: 2019/02/08 17:09:17 by mnishimo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,15 +37,12 @@ t_list	**re_list(t_list **path, t_fmt *fmt, t_lsflags *flags)
 
 	len = 0;
 	flags->fmt = fmt;
+	tmp = NULL;
 	cur = *path;
 	while (cur)
 	{
-		get_newfile(&tmp, &last, (char *)((*path)->content),
-			(char *)((*path)->content));
-		get_fmt_name(((t_file *)(last->content))->d_name, fmt);
-		if (flags->l == 'l')
-			fmt_cmp(flags->fmt,
-				&(((t_file *)(last->content))->stat));
+		get_newfile(&tmp, &last, (char *)(cur->content),
+			(char *)(cur->content));
 		pre = cur;
 		cur = cur->next;
 	}
@@ -53,8 +50,7 @@ t_list	**re_list(t_list **path, t_fmt *fmt, t_lsflags *flags)
 	fmt->len = len;
 	if (flags->n1 == '1' && flags->l != 'l')
 		flags->fmt->name = 1;
-	fmt->row = (flags->n1 != '1') ?
-	1 + fmt->len / (flags->w_col / fmt->name) : fmt->len;
+	fmt->row = fmt->len;
 	*path = tmp;
 	return (path);
 }

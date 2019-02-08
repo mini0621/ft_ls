@@ -6,23 +6,24 @@
 /*   By: mnishimo <mnishimo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/02 19:01:40 by mnishimo          #+#    #+#             */
-/*   Updated: 2019/02/07 19:13:46 by mnishimo         ###   ########.fr       */
+/*   Updated: 2019/02/08 17:33:41 by mnishimo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_ls.h"
 
-void	get_fmt_name(char *d_name, t_fmt *fmt)
+void		get_fmt_name(char *d_name, t_fmt *fmt)
 {
-	int	len;
+	size_t	len;
+
 	if (fmt == NULL || d_name == NULL)
 		return ;
 	len = ft_strlen(d_name);
-	if (len > fmt->name)
-		fmt->name = len;
+	if (len + 2 > fmt->name)
+		fmt->name = len + 1;
 }
 
-void	init_fmt(t_fmt *fmt)
+void		init_fmt(t_fmt *fmt)
 {
 	fmt->name = 0;
 	fmt->row = 0;
@@ -34,9 +35,36 @@ void	init_fmt(t_fmt *fmt)
 	fmt->blkcnt = -1;
 }
 
+void		get_fmt(t_list **files, t_fmt *fmt, t_lsflags *flags)
+{
+	t_list	*cur;
+	char	flag;
+
+	cur = *files;
+	flag = flags->l;
+	if (flags->n1 == '1' && flag != 'l')
+	{
+		fmt->name = 1;
+		return ;
+	}
+	while (flag == 'l' && cur)
+	{
+		get_fmt_name(((t_file *)(cur->content))->d_name, fmt);
+		fmt_cmp(fmt, &(((t_file *)(cur->content))->stat));
+		cur = cur->next;
+	}
+	while (flag != 'l' && cur)
+	{
+		get_fmt_name(((t_file *)(cur->content))->d_name, fmt);
+		cur = cur->next;
+	}
+	if (flags->n1 != '1')
+		flags->fmt->row = 1 + flags->fmt->len / (flags->w_col / flags->fmt->name);
+}
+
 blkcnt_t	fmt_cmp(t_fmt *fmt, struct stat *stat)
 {
-	size_t len;
+	size_t	len;
 	nlink_t	nlink;
 	off_t	size;
 

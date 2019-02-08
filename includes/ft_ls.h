@@ -6,7 +6,7 @@
 /*   By: mnishimo <mnishimo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/30 22:43:07 by mnishimo          #+#    #+#             */
-/*   Updated: 2019/02/07 20:26:04 by mnishimo         ###   ########.fr       */
+/*   Updated: 2019/02/08 17:37:46 by mnishimo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,11 +66,10 @@ int	prcs_first_dir(t_list **path, t_lsflags *flags, char **output);
 
 int				store_dp(char *path, DIR *dirp, t_list **files, t_lsflags *flags);
 t_list	*get_newfile(t_list **files, t_list **last, char *path, char *d_name);
-int				search_file(t_lsflags *flags, char *name, char **output);
 struct dirent	*skip_hid_files(DIR *dirp, char a);
 int		add_homedir(char a, t_list **files);
 
-t_list			*duplicate_dir(t_list **dirs, t_list **files, char *path);
+t_list			*duplicate_dir(t_list **dirs, t_list **files);
 t_list			*separate_dir(t_list **dirs, t_list **files, char *path);
 void			prcs_files(t_list **dir, t_lsflags *flags, char **output, t_fmt *fmt);
 void			prcs_dirs(char *path, t_list **dir, t_lsflags *flags, char **output);
@@ -89,16 +88,16 @@ char			*fmt_lnk(char *path, char *d_name, struct stat *stat, char **ret);
 char			*fmt_reg(char *path, char *d_name, struct stat *stat, t_lsflags *flags);
 char			*fmt_attr(mode_t mode, char type);
 
-void	get_fmt_name(char *d_name, t_fmt *fmt);
-void    init_fmt(t_fmt *fmt);
-blkcnt_t   fmt_cmp(t_fmt *fmt, struct stat *stat);
+void			get_fmt_name(char *d_name, t_fmt *fmt);
+void    		init_fmt(t_fmt *fmt);
+void			get_fmt(t_list **files, t_fmt *fmt, t_lsflags *flags);
+blkcnt_t		fmt_cmp(t_fmt *fmt, struct stat *stat);
 
-void 			sort_files(char *path, t_list **files, t_lsflags *flags);
+void 			sort_files(t_list **files, t_lsflags *flags);
 void			sort_by_name(t_list **files, char r);
-void	sort_by_time(char *path, t_list **files, char r, t_lsflags *flags);
-t_list	*insertion_sort(t_list **head, t_list *index, t_list **sorted, t_list *cur);
-t_list	*sort_hid_files(t_list *files, t_list *sorted, t_list **cur);
-
+void			sort_by_time(t_list **files, char r, t_lsflags *flags);
+t_list			*insertion_sort(t_list **head, t_list *index, t_list **sorted, t_list *cur);
+t_list			*sort_hid_files(t_list *files, t_list *sorted, t_list **cur);
 
 int				print_output(char **output);
 int				print_error(char *message, char *ver, char usage);

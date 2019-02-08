@@ -6,7 +6,7 @@
 /*   By: mnishimo <mnishimo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/31 13:45:28 by mnishimo          #+#    #+#             */
-/*   Updated: 2019/02/07 21:50:52 by mnishimo         ###   ########.fr       */
+/*   Updated: 2019/02/08 17:38:27 by mnishimo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ int	manage_path(char *path, t_lsflags *flags, char **output, char c)
 	init_fmt(&fmt);
 	if (store_dp(path, dirp, &files, flags) < 0)
 		return (2);
-	sort_files(path, &files, flags);
+	sort_files(&files, flags);
 	get_output(path, &files, flags, output);
 	closedir(dirp);
 	return (0);
@@ -78,7 +78,7 @@ int	prcs_first_dir(t_list **path, t_lsflags *flags, char **output)
 		*output = ft_strjoinfree(output, &tmp, 3);
 		return (0);
 	}
-	sort_files(NULL, re_list(path, &fmt, flags), flags);
+	sort_files(re_list(path, &fmt, flags), flags);
 	flags->fmt = &fmt;
 	output_arg_files(path, output, flags);
 	return (1);

@@ -6,7 +6,7 @@
 /*   By: mnishimo <mnishimo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/02 17:27:39 by mnishimo          #+#    #+#             */
-/*   Updated: 2019/02/07 22:38:45 by mnishimo         ###   ########.fr       */
+/*   Updated: 2019/02/08 17:34:54 by mnishimo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ int	get_output(char *path, t_list **files, t_lsflags *flags, char **output)
 	if (flags->rflag != 'y' && flags->cr == 'R')
 		separate_dir(&dirs, files, path);
 	else if (flags->rflag == 'y')
-		duplicate_dir(&dirs, files, path);
+		duplicate_dir(&dirs, files);
 	if (flags->l == 'l')
 		prcs_files_l(path, files, flags, output);
 	else
@@ -62,6 +62,7 @@ void	prcs_files(t_list **files, t_lsflags *flags, char **output, t_fmt *fmt)
 
 	if (files == NULL || *files == NULL)
 		return ;
+	get_fmt(files, fmt, flags);
 	cur = *files;;
 	mod = 0;
 	i = 0;
@@ -96,7 +97,7 @@ t_list	*separate_dir(t_list **dirs, t_list **files, char *path)
 	cur = *files;
 	while (cur != NULL)
 	{
-		if(ft_strcmp(((t_file *)(cur->content))->d_name, ".") != 0
+		if((ft_strcmp(((t_file *)(cur->content))->d_name, ".") != 0 || path == NULL)
 			&& (((t_file *)(cur->content))->stat.st_mode & S_IFMT) == S_IFDIR)
 		{
 			ptr = cur;
@@ -110,7 +111,7 @@ t_list	*separate_dir(t_list **dirs, t_list **files, char *path)
 	return (*dirs);
 }
 
-t_list	*duplicate_dir(t_list **dirs, t_list **files, char *path)
+t_list	*duplicate_dir(t_list **dirs, t_list **files)
 {
 	t_list	*cur;
 	t_list	*ptr;
