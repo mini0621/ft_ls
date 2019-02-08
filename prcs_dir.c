@@ -6,7 +6,7 @@
 /*   By: mnishimo <mnishimo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/02 17:27:39 by mnishimo          #+#    #+#             */
-/*   Updated: 2019/02/08 21:34:28 by mnishimo         ###   ########.fr       */
+/*   Updated: 2019/02/08 22:43:29 by mnishimo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,7 +92,7 @@ t_list	*separate_dir(t_list **dirs, t_list **files, char *path)
 	while (cur != NULL)
 	{
 		if((path == NULL || (ft_strcmp(((t_file *)(cur->content))->d_name, ".") != 0
-						&& ft_strcmp(((t_file *)(cur->content))->d_name, "..") != 0))
+					&& ft_strcmp(((t_file *)(cur->content))->d_name, "..") != 0))
 				&& (((t_file *)(cur->content))->stat.st_mode & S_IFMT) == S_IFDIR)
 		{
 			ptr = cur;
@@ -140,4 +140,3 @@ t_list	*duplicate_dir(t_list **dirs, t_list **files)
 	}
 	return (*dirs);
 }
-
