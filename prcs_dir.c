@@ -6,7 +6,7 @@
 /*   By: mnishimo <mnishimo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/02 17:27:39 by mnishimo          #+#    #+#             */
-/*   Updated: 2019/02/08 18:16:54 by mnishimo         ###   ########.fr       */
+/*   Updated: 2019/02/08 18:48:08 by mnishimo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,6 +90,7 @@ t_list	*separate_dir(t_list **dirs, t_list **files, char *path)
 {
 	t_list	*cur;
 	t_list	*ptr;
+	t_list	*last;
 
 	*dirs = NULL;
 	if (files == NULL || *files == NULL)
@@ -104,7 +105,11 @@ t_list	*separate_dir(t_list **dirs, t_list **files, char *path)
 			ptr = cur;
 			cur = cur->next;
 			ptr = ft_lstsub(files, ptr);
-			ft_lstpushback(dirs, ptr);
+			if (*dirs == NULL)
+				*dirs = ptr;
+			else
+				last->next = ptr;
+			last = ptr;
 		}
 		else
 			cur = cur->next;
@@ -116,6 +121,7 @@ t_list	*duplicate_dir(t_list **dirs, t_list **files)
 {
 	t_list	*cur;
 	t_list	*ptr;
+	t_list	*last;
 
 	*dirs = NULL;
 	if (files == NULL || *files == NULL)
@@ -130,7 +136,11 @@ t_list	*duplicate_dir(t_list **dirs, t_list **files)
 			if ((ptr = ft_lstnew(cur->content, cur->content_size)) != NULL)
 			{
 				((t_file *)(ptr->content))->d_name = strdup(((t_file *)(ptr->content))->d_name);
-				ft_lstpushback(dirs, ptr);
+				if (*dirs == NULL)
+					*dirs = ptr;
+				else
+					last->next = ptr;
+				last = ptr;
 			}
 		}
 		cur = cur->next;
