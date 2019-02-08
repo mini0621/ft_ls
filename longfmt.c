@@ -6,7 +6,7 @@
 /*   By: mnishimo <mnishimo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/01 18:20:25 by mnishimo          #+#    #+#             */
-/*   Updated: 2019/02/08 19:51:23 by mnishimo         ###   ########.fr       */
+/*   Updated: 2019/02/08 22:18:20 by mnishimo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,10 @@ void	prcs_files_l(char *path, t_list **files, t_lsflags *flags)
 		ft_printf("total %llu\n", flags->fmt->blkcnt);
 	cur = *files;
 	while (cur)
+	{
 		fmt_reg(path, ((t_file *)(cur->content))->d_name, &(((t_file *)(cur->content))->stat), flags);
+		cur = cur->next;
+	}
 }
 
 void	fmt_lnk(char *path, char *d_name, struct stat *stat)
@@ -47,11 +50,31 @@ void	fmt_lnk(char *path, char *d_name, struct stat *stat)
 	ft_strdel(&buf);
 }
 
+char	*fmt_time(time_t *t)
+{
+	char	*ret;
+	char	*year;
+	char	*tmp;
+	time_t	now;
+
+	tmp = ctime(t);
+	if (time(NULL) - 2592000 >*t)
+	{
+		year = ft_strsub(tmp, 19, 5);
+		ret = ft_strsub(tmp, 4, 7);
+		ret = ft_strjoinfree(&ret, &year, 3);
+	}
+	else
+		ret = ft_strsub(tmp, 4, 12);
+	return (ret);
+}
+
 void	fmt_reg(char *path, char *d_name, struct stat *stat, t_lsflags *flags)
 {
 	char	type;
 	char	*ret;
 	t_fmt	*fmt;
+	char	*t;
 
 	fmt = flags->fmt;
 	type =  ((stat->st_mode & S_IFMT) == S_IFDIR) ? 'd' : '-';
@@ -60,8 +83,11 @@ void	fmt_reg(char *path, char *d_name, struct stat *stat, t_lsflags *flags)
 	if ((ret = fmt_attr(stat->st_mode, type)) == NULL)
 		return ;
 	ft_printf("%s %*llu %-*s  %-*s  %*llu ", ret, fmt->nlink, stat->st_nlink, fmt->user, (getpwuid(stat->st_uid))->pw_name, fmt->group, (getgrgid(stat->st_gid))->gr_name, fmt->size, stat->st_size);
-	ft_printf(" %*s", fmt->name, d_name);
 	free(ret);
+	t = fmt_time(&(stat->st_mtime));
+	ft_printf("%s ", t);
+	free(t);
+	ft_printf("%s", d_name);
 	fmt_lnk(path, d_name, stat);
 }
 

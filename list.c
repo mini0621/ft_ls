@@ -6,7 +6,7 @@
 /*   By: mnishimo <mnishimo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/31 18:43:47 by mnishimo          #+#    #+#             */
-/*   Updated: 2019/02/08 18:45:26 by mnishimo         ###   ########.fr       */
+/*   Updated: 2019/02/08 22:05:19 by mnishimo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,8 @@ void	ft_chardel(void *ptr, size_t size)
 {
 	if (ptr == NULL || size == 0)
 		return ;
-	free((char *)ptr);
+	free(((t_file *)ptr)->d_name);
+	free(ptr);
 }
 
 

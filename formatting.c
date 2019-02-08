@@ -6,7 +6,7 @@
 /*   By: mnishimo <mnishimo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/02 19:01:40 by mnishimo          #+#    #+#             */
-/*   Updated: 2019/02/08 20:16:43 by mnishimo         ###   ########.fr       */
+/*   Updated: 2019/02/08 21:40:19 by mnishimo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,14 +43,13 @@ void		get_fmt(t_list **files, t_fmt *fmt, t_lsflags *flags)
 
 	cur = *files;
 	flag = flags->l;
-	if (flags->n1 == '1' && flag != 'l')
+	if (flags->n1 == '1')
 	{
 		fmt->name = 1;
 		return ;
 	}
 	while (flag == 'l' && cur)
 	{
-		get_fmt_name(((t_file *)(cur->content))->d_name, fmt);
 		fmt_cmp(fmt, &(((t_file *)(cur->content))->stat));
 		cur = cur->next;
 	}

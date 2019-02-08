@@ -6,7 +6,7 @@
 /*   By: mnishimo <mnishimo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/31 22:08:26 by mnishimo          #+#    #+#             */
-/*   Updated: 2019/02/08 19:40:34 by mnishimo         ###   ########.fr       */
+/*   Updated: 2019/02/08 21:44:05 by mnishimo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@ int	store_dp(char *path, DIR *dirp, t_list **files, t_lsflags *flags)
 		len++;
 	}
 	flags->fmt->len = len;
+	flags->fmt->blkcnt = blkcnt;
 	flags->fmt->row = flags->fmt->len;
 	return (0);
 }
