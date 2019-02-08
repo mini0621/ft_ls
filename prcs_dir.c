@@ -6,7 +6,7 @@
 /*   By: mnishimo <mnishimo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/02 17:27:39 by mnishimo          #+#    #+#             */
-/*   Updated: 2019/02/08 17:34:54 by mnishimo         ###   ########.fr       */
+/*   Updated: 2019/02/08 18:16:54 by mnishimo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ void	prcs_dirs(char *path, t_list **dir, t_lsflags *flags, char **output)
 		*dir = (*dir)->next;
 		ft_lstdelone(&tmp, &ft_ldel);
 	}
-	print_output(output);
+	//print_output(output);
 }
 
 void	prcs_files(t_list **files, t_lsflags *flags, char **output, t_fmt *fmt)
@@ -97,7 +97,8 @@ t_list	*separate_dir(t_list **dirs, t_list **files, char *path)
 	cur = *files;
 	while (cur != NULL)
 	{
-		if((ft_strcmp(((t_file *)(cur->content))->d_name, ".") != 0 || path == NULL)
+		if((path == NULL || (ft_strcmp(((t_file *)(cur->content))->d_name, ".") != 0
+			&& ft_strcmp(((t_file *)(cur->content))->d_name, "..") != 0))
 			&& (((t_file *)(cur->content))->stat.st_mode & S_IFMT) == S_IFDIR)
 		{
 			ptr = cur;
@@ -122,7 +123,8 @@ t_list	*duplicate_dir(t_list **dirs, t_list **files)
 	cur = *files;
 	while (cur)
 	{
-		if(ft_strcmp(((t_file *)(cur->content))->d_name, ".") != 0
+		if((ft_strcmp(((t_file *)(cur->content))->d_name, ".") != 0
+			&& ft_strcmp(((t_file *)(cur->content))->d_name, "..") != 0)
 			&& (((t_file *)(cur->content))->stat.st_mode & S_IFMT) == S_IFDIR)
 		{
 			if ((ptr = ft_lstnew(cur->content, cur->content_size)) != NULL)

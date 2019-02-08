@@ -6,7 +6,7 @@
 /*   By: mnishimo <mnishimo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/31 22:08:26 by mnishimo          #+#    #+#             */
-/*   Updated: 2019/02/08 17:09:37 by mnishimo         ###   ########.fr       */
+/*   Updated: 2019/02/08 18:14:28 by mnishimo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,8 @@ int	store_dp(char *path, DIR *dirp, t_list **files, t_lsflags *flags)
 		ft_strdel(&tpath);
 		len++;
 	}
-	flags->fmt->len = len + add_homedir(flags->a, files);
+	flags->fmt->len = len;
+	//add_homedir(flags->a, files);
 	flags->fmt->row = flags->fmt->len;
 	return (0);
 }
@@ -62,12 +63,18 @@ t_list	*get_newfile(t_list **files, t_list **last, char *path, char *d_name)
 int		add_homedir(char a, t_list **files)
 {
 	t_list	*new;
+	t_file	file;
 
-	if (a == 'a' && (new = ft_lstnew(ft_strdup("."), 2)) != NULL)
+	if (a != 'a')
+		return (0);
+	if (lstat(".", &(file.stat)) != 0 || !(file.d_name = ft_strdup(".")))
+		return (0);
+	if ((new = ft_lstnew(&file, sizeof(file))) != NULL)
 	{
 		ft_lstadd(files, new);
 		return (1);
 	}
+	free(file.d_name);
 	return (0);
 }
 
