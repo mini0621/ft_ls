@@ -6,7 +6,7 @@
 /*   By: mnishimo <mnishimo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/30 22:43:07 by mnishimo          #+#    #+#             */
-/*   Updated: 2019/02/08 21:43:58 by mnishimo         ###   ########.fr       */
+/*   Updated: 2019/02/09 00:08:46 by mnishimo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,6 +84,7 @@ void    		init_flags(t_lsflags *flags);
 char			*add_path(char *path, char *name);
 
 void			prcs_files_l(char *path, t_list **files, t_lsflags *flags);
+char			*fmt_time(time_t *t);
 void			fmt_lnk(char *path, char *d_name, struct stat *stat);
 void			fmt_reg(char *path, char *d_name, struct stat *stat, t_lsflags *flags);
 char			*fmt_attr(mode_t mode, char type);
@@ -102,6 +103,8 @@ t_list			*sort_hid_files(t_list *files, t_list *sorted, t_list **cur);
 int				print_error(char *message, char *ver, char usage);
 
 time_t			get_time(t_list *cur, t_lsflags *flags);
+char			get_xattr(mode_t mode, char c);
+char			get_type(mode_t mode);
 
 void			ft_ldel(void *ptr, size_t size);
 void			ft_chardel(void *ptr, size_t size);

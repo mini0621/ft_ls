@@ -6,7 +6,7 @@
 /*   By: mnishimo <mnishimo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/01 18:20:25 by mnishimo          #+#    #+#             */
-/*   Updated: 2019/02/08 22:18:20 by mnishimo         ###   ########.fr       */
+/*   Updated: 2019/02/09 00:08:03 by mnishimo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ char	*fmt_time(time_t *t)
 	time_t	now;
 
 	tmp = ctime(t);
-	if (time(NULL) - 2592000 >*t)
+	if (time(NULL) - 2592000 > *t)
 	{
 		year = ft_strsub(tmp, 19, 5);
 		ret = ft_strsub(tmp, 4, 7);
@@ -77,9 +77,7 @@ void	fmt_reg(char *path, char *d_name, struct stat *stat, t_lsflags *flags)
 	char	*t;
 
 	fmt = flags->fmt;
-	type =  ((stat->st_mode & S_IFMT) == S_IFDIR) ? 'd' : '-';
-	if ((stat->st_mode & S_IFMT) == S_IFLNK)
-		type = 'l';
+	type =  get_type(stat->st_mode);
 	if ((ret = fmt_attr(stat->st_mode, type)) == NULL)
 		return ;
 	ft_printf("%s %*llu %-*s  %-*s  %*llu ", ret, fmt->nlink, stat->st_nlink, fmt->user, (getpwuid(stat->st_uid))->pw_name, fmt->group, (getgrgid(stat->st_gid))->gr_name, fmt->size, stat->st_size);
@@ -101,13 +99,13 @@ char	*fmt_attr(mode_t mode, char type)
 	ret[0] = type;
 	ret[1] = ((mode & S_IRUSR) && (mode & S_IREAD)) ? 'r': '-';
 	ret[2] = ((mode & S_IWUSR) && (mode & S_IWRITE)) ? 'w': '-';
-	ret[3] = ((mode & S_IXUSR) && (mode & S_IEXEC)) ? 'x': '-';
+	ret[3] = get_xattr(mode, 'u');
 	ret[4] = ((mode & S_IRGRP) && (mode & S_IREAD)) ? 'r': '-';
 	ret[5] = ((mode & S_IWGRP) && (mode & S_IWRITE)) ? 'w': '-';
-	ret[6] = ((mode & S_IXGRP) && (mode & S_IEXEC)) ? 'x': '-';
+	ret[6] = get_xattr(mode, 'g');
 	ret[7] = ((mode & S_IROTH) && (mode & S_IREAD)) ? 'r': '-';
 	ret[8] = ((mode & S_IWOTH) && (mode & S_IWRITE)) ? 'w': '-';
-	ret[9] = ((mode & S_IXOTH) && (mode & S_IEXEC)) ? 'x': '-';
+	ret[9] = get_xattr(mode, 'o');
 	ret[10] = ' ';
 	return (ret);
 }
