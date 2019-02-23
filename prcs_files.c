@@ -6,7 +6,7 @@
 /*   By: mnishimo <mnishimo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/11 18:41:03 by mnishimo          #+#    #+#             */
-/*   Updated: 2019/02/19 00:21:01 by mnishimo         ###   ########.fr       */
+/*   Updated: 2019/02/23 03:47:46 by mnishimo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ int		output_arg_files(t_list **path, t_lsflags *flags)
 	return (1);
 }
 
-void	print_files_simple(t_list **files, t_lsflags *flags, t_fmt *fmt)
+void	print_files_simple(t_list **files, t_lsflags *flags)
 {
 	t_list	*cur;
 
@@ -60,7 +60,7 @@ void	print_files_simple(t_list **files, t_lsflags *flags, t_fmt *fmt)
 	{
 		while (cur)
 		{
-			ft_printf("%-*s\n", fmt->name, ((t_file *)(cur->content))->d_name);
+			ft_printf("%s\n", ((t_file *)(cur->content))->d_name);
 			cur = cur->next;
 		}
 	}
@@ -68,7 +68,8 @@ void	print_files_simple(t_list **files, t_lsflags *flags, t_fmt *fmt)
 	{
 		while (cur)
 		{
-			ft_printf("%-*s", fmt->name, ((t_file *)(cur->content))->d_name);
+			ft_printf("%-*s", flags->fmt->name,
+			((t_file *)(cur->content))->d_name);
 			cur = cur->next;
 		}
 		ft_printf("\n");
@@ -83,7 +84,7 @@ void	prcs_files(t_list **files, t_lsflags *flags, t_fmt *fmt)
 
 	get_fmt(files, fmt, flags);
 	if (flags->n1 == '1' || fmt->row == 1)
-		return (print_files_simple(files, flags, fmt));
+		return (print_files_simple(files, flags));
 	mod = 1;
 	cur = *files;
 	i = 0;

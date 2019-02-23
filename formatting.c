@@ -6,7 +6,7 @@
 /*   By: mnishimo <mnishimo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/02 19:01:40 by mnishimo          #+#    #+#             */
-/*   Updated: 2019/02/18 23:18:17 by mnishimo         ###   ########.fr       */
+/*   Updated: 2019/02/23 03:53:06 by mnishimo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ void		get_fmt(t_list **files, t_fmt *fmt, t_lsflags *flags)
 		cur = cur->next;
 	}
 	if ((row = flags->w_col / flags->fmt->name) == 0)
-		flags->fmt->row = 1;
+		flags->n1 = '1';
 	else if ((row = flags->fmt->len / row) == 0)
 		flags->fmt->row = 1;
 	else

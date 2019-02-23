@@ -6,7 +6,7 @@
 /*   By: mnishimo <mnishimo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/30 22:43:07 by mnishimo          #+#    #+#             */
-/*   Updated: 2019/02/18 23:26:51 by mnishimo         ###   ########.fr       */
+/*   Updated: 2019/02/23 03:45:45 by mnishimo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,8 +77,7 @@ void			get_sym_dir(t_list **dirs);
 
 void			prcs_files(t_list **dir, t_lsflags *flags, t_fmt *fmt);
 int				get_output(char *path, t_list **files, t_lsflags *flags);
-void			print_files_simple(t_list **files, t_lsflags *flags,
-					t_fmt *fmt);
+void			print_files_simple(t_list **files, t_lsflags *flags);
 int				output_arg_files(t_list **path, t_lsflags *flags);
 void			prcs_files_l(char *path, t_list **files, t_lsflags *flags);
 
@@ -124,4 +123,6 @@ char			get_acl_attr(char *path);
 void			ft_ldel(void *ptr, size_t size);
 void			ft_chardel(void *ptr, size_t size);
 t_list			**re_list(t_list **path, t_fmt *fmt, t_lsflags *flags);
+void			refmt_newel(t_list *cur, t_list **tmp,
+					t_list **last, t_lsflags *flags);
 #endif
