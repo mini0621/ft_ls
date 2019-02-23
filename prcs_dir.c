@@ -6,30 +6,11 @@
 /*   By: mnishimo <mnishimo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/02 17:27:39 by mnishimo          #+#    #+#             */
-/*   Updated: 2019/02/08 22:43:29 by mnishimo         ###   ########.fr       */
+/*   Updated: 2019/02/19 00:19:10 by mnishimo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_ls.h"
-
-int	get_output(char *path, t_list **files, t_lsflags *flags)
-{
-	t_list	*dirs;
-
-	dirs = NULL;
-	if (flags->rflag != 'y' && flags->cr == 'R')
-		separate_dir(&dirs, files, path);
-	else if (flags->rflag == 'y')
-		duplicate_dir(&dirs, files);
-	if (flags->l == 'l')
-		prcs_files_l(path, files, flags);
-	else
-		prcs_files(files, flags, flags->fmt);
-	ft_lstdel(files, &ft_ldel);
-	if (flags->cr == 'R')
-		prcs_dirs(path, &dirs, flags);
-	return (1);
-}
 
 void	prcs_dirs(char *path, t_list **dir, t_lsflags *flags)
 {
@@ -50,33 +31,59 @@ void	prcs_dirs(char *path, t_list **dir, t_lsflags *flags)
 	}
 }
 
-void	prcs_files(t_list **files, t_lsflags *flags, t_fmt *fmt)
+void	get_sym_dir(t_list **dirs)
 {
-	t_list	*cur;
-	int		mod;
-	int		i;
-	char	*tmp;
+	t_list		*cur;
+	char		*buff;
+	ssize_t		buff_size;
+	struct stat	*stat;
+	struct stat	tmp;
 
-	if (files == NULL || *files == NULL)
+	if (dirs == NULL || *dirs == NULL)
 		return ;
-	get_fmt(files, fmt, flags);
-	cur = *files;;
-	mod = 0;
-	i = 0;
-	while (mod < fmt->row)
+	cur = *dirs;
+	while (cur)
 	{
-		if (cur == NULL)
+		stat = &(((t_file *)(cur->content))->stat);
+		buff_size = stat->st_size + 1;
+		if ((stat->st_mode & S_IFMT) == S_IFLNK
+			&& (buff = ft_strnew(buff_size)) != NULL)
 		{
-			i = 0;
-			ft_printf("\n");
-			cur = *files;
-			mod++;
+			readlink(((t_file *)(cur->content))->d_name, buff, buff_size);
+			lstat(buff, &tmp);
+			if ((tmp.st_mode & S_IFMT) == S_IFDIR)
+				ft_memcpy(stat, &tmp, sizeof(struct stat));
 		}
-		if (i % fmt->row == mod)
-			ft_printf("%-*s", fmt->name, ((t_file *)(cur->content))->d_name);
 		cur = cur->next;
-		i++;
 	}
+}
+
+int		prcs_first_dir(t_list **path, t_lsflags *flags)
+{
+	t_fmt	fmt;
+
+	if (*path == NULL && flags->d != 'd')
+		return (manage_path(".", flags, 'y'));
+	init_fmt(&fmt);
+	flags->fmt = &fmt;
+	if (flags->d == 'd' && flags->l == 'l' && *path == NULL)
+	{
+		get_newfile(path, path, ".", ".");
+		prcs_files_l(NULL, path, flags);
+		ft_lstdel(path, &ft_ldel);
+		return (0);
+	}
+	if (flags->d == 'd' && *path == NULL)
+	{
+		ft_printf(".\n");
+		return (0);
+	}
+	sort_files(re_list(path, &fmt, flags), flags);
+	if (output_arg_files(path, flags) == 0)
+		return (-1);
+	if (*path != NULL)
+		ft_printf("\n");
+	return ((*path == NULL) ? 0 : 1);
 }
 
 t_list	*separate_dir(t_list **dirs, t_list **files, char *path)
@@ -84,24 +91,22 @@ t_list	*separate_dir(t_list **dirs, t_list **files, char *path)
 	t_list	*cur;
 	t_list	*ptr;
 	t_list	*last;
+	t_file	*file;
 
-	*dirs = NULL;
 	if (files == NULL || *files == NULL)
 		return (NULL);
 	cur = *files;
 	while (cur != NULL)
 	{
-		if((path == NULL || (ft_strcmp(((t_file *)(cur->content))->d_name, ".") != 0
-					&& ft_strcmp(((t_file *)(cur->content))->d_name, "..") != 0))
-				&& (((t_file *)(cur->content))->stat.st_mode & S_IFMT) == S_IFDIR)
+		file = (t_file *)(cur->content);
+		if ((!path || (ft_strcmp(file->d_name, ".") != 0
+			&& ft_strcmp(file->d_name, "..") != 0))
+			&& (file->stat.st_mode & S_IFMT) == S_IFDIR)
 		{
 			ptr = cur;
 			cur = cur->next;
 			ptr = ft_lstsub(files, ptr);
-			if (*dirs == NULL)
-				*dirs = ptr;
-			else
-				last->next = ptr;
+			ft_lstappend(dirs, &last, ptr);
 			last = ptr;
 		}
 		else
@@ -115,24 +120,22 @@ t_list	*duplicate_dir(t_list **dirs, t_list **files)
 	t_list	*cur;
 	t_list	*ptr;
 	t_list	*last;
+	t_file	*file;
 
-	*dirs = NULL;
 	if (files == NULL || *files == NULL)
 		return (NULL);
 	cur = *files;
 	while (cur)
 	{
-		if((ft_strcmp(((t_file *)(cur->content))->d_name, ".") != 0
-					&& ft_strcmp(((t_file *)(cur->content))->d_name, "..") != 0)
-				&& (((t_file *)(cur->content))->stat.st_mode & S_IFMT) == S_IFDIR)
+		file = (t_file *)(cur->content);
+		if (ft_strcmp(file->d_name, ".") && ft_strcmp(file->d_name, "..")
+			&& (file->stat.st_mode & S_IFMT) == S_IFDIR)
 		{
 			if ((ptr = ft_lstnew(cur->content, cur->content_size)) != NULL)
 			{
-				((t_file *)(ptr->content))->d_name = strdup(((t_file *)(ptr->content))->d_name);
-				if (*dirs == NULL)
-					*dirs = ptr;
-				else
-					last->next = ptr;
+				file = (t_file *)(ptr->content);
+				file->d_name = ft_strdup(file->d_name);
+				ft_lstappend(dirs, &last, ptr);
 				last = ptr;
 			}
 		}

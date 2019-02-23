@@ -6,7 +6,7 @@
 /*   By: mnishimo <mnishimo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/02 19:01:40 by mnishimo          #+#    #+#             */
-/*   Updated: 2019/02/09 14:40:48 by mnishimo         ###   ########.fr       */
+/*   Updated: 2019/02/18 23:18:17 by mnishimo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,8 @@ void		get_fmt_name(char *d_name, t_fmt *fmt)
 
 void		init_fmt(t_fmt *fmt)
 {
-	fmt->name = 0;
-	fmt->row = 0;
+	fmt->name = 1;
+	fmt->row = 1;
 	fmt->len = 0;
 	fmt->nlink = 0;
 	fmt->user = 0;
@@ -44,54 +44,60 @@ void		get_fmt(t_list **files, t_fmt *fmt, t_lsflags *flags)
 	cur = *files;
 	flag = flags->l;
 	if (flags->n1 == '1')
-	{
-		fmt->name = 1;
 		return ;
-	}
 	while (flag == 'l' && cur)
 	{
 		fmt_cmp(fmt, &(((t_file *)(cur->content))->stat));
 		cur = cur->next;
+		return ;
 	}
 	while (flag != 'l' && cur)
 	{
 		get_fmt_name(((t_file *)(cur->content))->d_name, fmt);
 		cur = cur->next;
 	}
-	if (flags->n1 != '1')
-	{
-		row = flags->fmt->len / (flags->w_col / flags->fmt->name);
-		flags->fmt->row = (flags->fmt->name * flags->fmt->len < flags->w_col) ? 1: 1 + row;
-	}
+	if ((row = flags->w_col / flags->fmt->name) == 0)
+		flags->fmt->row = 1;
+	else if ((row = flags->fmt->len / row) == 0)
+		flags->fmt->row = 1;
+	else
+		flags->fmt->row = 1 + row;
 }
 
 blkcnt_t	fmt_cmp(t_fmt *fmt, struct stat *stat)
 {
-	size_t	len;
-	nlink_t	nlink;
-	off_t	size;
+	size_t			len;
+	struct group	*gr;
+	struct passwd	*pw;
+
+	if (!fmt || !stat)
+		return (0);
+	fmt->nlink = cmp_len_nbr(fmt->nlink, (long long)stat->st_nlink);
+	if ((pw = getpwuid(stat->st_uid))
+		&& (len = ft_strlen(pw->pw_name)) > fmt->user)
+		fmt->user = len;
+	if ((gr = getgrgid(stat->st_gid))
+		&& (len = ft_strlen(gr->gr_name)) > fmt->group)
+		fmt->group = len;
+	if ((stat->st_mode & S_IFMT) == S_IFBLK
+		|| (stat->st_mode & S_IFMT) == S_IFCHR)
+		fmt->size = 8;
+	else
+		fmt->size = cmp_len_nbr(fmt->size, (long long)stat->st_size);
+	return (stat->st_blocks);
+}
+
+size_t		cmp_len_nbr(size_t len1, long long nbr)
+{
+	size_t len;
 
 	len = 0;
-	nlink = stat->st_nlink;
-	while (nlink != 0)
+	while (nbr != 0)
 	{
-		nlink /= 10;
+		nbr /= 10;
 		len++;
 	}
-	if (len > fmt->nlink)
-		fmt->nlink = len;
-	if ((len = ft_strlen((getpwuid(stat->st_uid))->pw_name)) > fmt->user)
-		fmt->user = len;
-	if ((len = ft_strlen((getgrgid(stat->st_gid))->gr_name)) > fmt->group)
-		fmt->group = len;
-	len = 0;
-	size = stat->st_size;
-	while (size != 0)
-	{
-		size /= 10;
-		len++;
-	}
-	if (len > fmt->size)
-		fmt->size = len;
-	return (stat->st_blocks);
+	if (len > len1)
+		return (len);
+	return (len1);
 }

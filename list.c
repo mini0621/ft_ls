@@ -6,7 +6,7 @@
 /*   By: mnishimo <mnishimo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/31 18:43:47 by mnishimo          #+#    #+#             */
-/*   Updated: 2019/02/08 22:54:11 by mnishimo         ###   ########.fr       */
+/*   Updated: 2019/02/12 18:34:02 by mnishimo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,6 @@ void	ft_chardel(void *ptr, size_t size)
 	free((char *)ptr);
 }
 
-
 t_list	**re_list(t_list **path, t_fmt *fmt, t_lsflags *flags)
 {
 	t_list	*cur;
@@ -46,6 +45,7 @@ t_list	**re_list(t_list **path, t_fmt *fmt, t_lsflags *flags)
 			(char *)(cur->content));
 		pre = cur;
 		cur = cur->next;
+		len++;
 	}
 	ft_lstdel(path, &ft_chardel);
 	fmt->len = len;
