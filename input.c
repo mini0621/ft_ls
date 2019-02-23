@@ -6,7 +6,7 @@
 /*   By: mnishimo <mnishimo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/31 14:11:16 by mnishimo          #+#    #+#             */
-/*   Updated: 2019/02/18 23:35:47 by mnishimo         ###   ########.fr       */
+/*   Updated: 2019/02/23 02:40:55 by mnishimo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,7 @@ int		validate_input(t_list **path)
 	int			empty;
 	struct stat	stat;
 
+	sort_inputs(path, '\0');
 	empty = 0;
 	if (*path == NULL)
 		return (0);

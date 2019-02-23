@@ -6,7 +6,7 @@
 /*   By: mnishimo <mnishimo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/01 18:20:25 by mnishimo          #+#    #+#             */
-/*   Updated: 2019/02/18 23:17:25 by mnishimo         ###   ########.fr       */
+/*   Updated: 2019/02/23 02:44:59 by mnishimo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ char	*fmt_time(time_t *t)
 	time_t	now;
 
 	tmp = ctime(t);
-	if (time(&now) - 15778458 > *t || now + 15778458 < *t)
+	if (time(&now) - 15778458 > *t || now + 3600 < *t)
 	{
 		year = ft_strsub(tmp, 19, 10);
 		ret = ft_strsub(tmp, 4, 7);
@@ -112,14 +112,14 @@ char	*fmt_attr(char *path, mode_t mode, char type)
 	if ((ret = ft_strnew(11)) == NULL)
 		return (NULL);
 	ret[0] = type;
-	ret[1] = ((mode & S_IRUSR) && (mode & S_IREAD)) ? 'r' : '-';
-	ret[2] = ((mode & S_IWUSR) && (mode & S_IWRITE)) ? 'w' : '-';
+	ret[1] = (mode & S_IRUSR) ? 'r' : '-';
+	ret[2] = (mode & S_IWUSR) ? 'w' : '-';
 	ret[3] = get_xattr(mode, 'u');
-	ret[4] = ((mode & S_IRGRP) && (mode & S_IREAD)) ? 'r' : '-';
-	ret[5] = ((mode & S_IWGRP) && (mode & S_IWRITE)) ? 'w' : '-';
+	ret[4] = (mode & S_IRGRP) ? 'r' : '-';
+	ret[5] = (mode & S_IWGRP) ? 'w' : '-';
 	ret[6] = get_xattr(mode, 'g');
-	ret[7] = ((mode & S_IROTH) && (mode & S_IREAD)) ? 'r' : '-';
-	ret[8] = ((mode & S_IWOTH) && (mode & S_IWRITE)) ? 'w' : '-';
+	ret[7] = (mode & S_IROTH) ? 'r' : '-';
+	ret[8] = (mode & S_IWOTH) ? 'w' : '-';
 	ret[9] = get_xattr(mode, 'o');
 	ret[10] = get_acl_attr(path);
 	return (ret);

@@ -6,7 +6,7 @@
 /*   By: mnishimo <mnishimo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/02 17:27:39 by mnishimo          #+#    #+#             */
-/*   Updated: 2019/02/19 00:19:10 by mnishimo         ###   ########.fr       */
+/*   Updated: 2019/02/23 02:41:51 by mnishimo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,7 @@ void	get_sym_dir(t_list **dirs)
 			lstat(buff, &tmp);
 			if ((tmp.st_mode & S_IFMT) == S_IFDIR)
 				ft_memcpy(stat, &tmp, sizeof(struct stat));
+			free(buff);
 		}
 		cur = cur->next;
 	}
@@ -62,6 +63,7 @@ int		prcs_first_dir(t_list **path, t_lsflags *flags)
 {
 	t_fmt	fmt;
 
+	sort_inputs(path, flags->r);
 	if (*path == NULL && flags->d != 'd')
 		return (manage_path(".", flags, 'y'));
 	init_fmt(&fmt);

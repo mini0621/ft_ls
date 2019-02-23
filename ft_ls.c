@@ -6,7 +6,7 @@
 /*   By: mnishimo <mnishimo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/31 13:45:28 by mnishimo          #+#    #+#             */
-/*   Updated: 2019/02/19 00:20:17 by mnishimo         ###   ########.fr       */
+/*   Updated: 2019/02/23 02:41:54 by mnishimo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,6 @@ int	main(int argc, char **argv)
 	path = NULL;
 	if ((c = read_input(&flags, &path, argc, argv)) != '\0')
 		return (print_error("ft_ls: illegal option -- %s\n", &c, 'y'));
-	sort_inputs(&path, flags.r);
 	if ((validate_input(&path) < 0 && path == NULL)
 		|| (ret = prcs_first_dir(&path, &flags)) == 0)
 		return (0);

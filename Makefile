@@ -1,3 +1,15 @@
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    Makefile                                           :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: mnishimo <mnishimo@student.42.fr>          +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2019/02/23 02:37:51 by mnishimo          #+#    #+#              #
+#    Updated: 2019/02/23 02:37:58 by mnishimo         ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
+
 NAME = ft_ls
 
 CC = gcc 
@@ -9,16 +21,12 @@ LDIR = libftprintf/
 LIBFT = libftprintf.a
 LIB = -lftprintf
 
-
-DEPS =
-
 SRC = ft_ls.c input.c output.c list.c storing.c formatting.c path_string.c prcs_dir.c longfmt.c sort_files.c access_stat.c prcs_files.c lsflags.c
 OBJ = $(SRC:.c=.o)
 
 RM = rm -f 
 
 .PHONY: all fclean clean
-
 	
 all: $(NAME)
 
