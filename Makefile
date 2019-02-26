@@ -6,7 +6,7 @@
 #    By: mnishimo <mnishimo@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/02/23 02:37:51 by mnishimo          #+#    #+#              #
-#    Updated: 2019/02/23 02:37:58 by mnishimo         ###   ########.fr        #
+#    Updated: 2019/02/26 20:28:27 by mnishimo         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,7 +21,8 @@ LDIR = libftprintf/
 LIBFT = libftprintf.a
 LIB = -lftprintf
 
-SRC = ft_ls.c input.c output.c list.c storing.c formatting.c path_string.c prcs_dir.c longfmt.c sort_files.c access_stat.c prcs_files.c lsflags.c
+DEPS = includes/lscolors.h includes/ft_ls.h 
+SRC = ft_ls.c input.c output.c list.c storing.c formatting.c path_string.c prcs_dir.c longfmt.c sort_files.c access_stat.c prcs_files.c lsflags.c lscolors.c
 OBJ = $(SRC:.c=.o)
 
 RM = rm -f 
@@ -36,7 +37,7 @@ $(LIBFT):
 %.o: %.c
 	$(CC) $(CFLAGS) -I $(INCLUDES) -o $@ -c $<
 
-$(NAME): $(OBJ)
+$(NAME): $(OBJ) $(DEPS)
 	make -C libftprintf/
 	$(CC) -o $@ $(OBJ) -L $(LDIR) $(LIB)
 

@@ -6,13 +6,14 @@
 /*   By: mnishimo <mnishimo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/30 22:43:07 by mnishimo          #+#    #+#             */
-/*   Updated: 2019/02/23 03:45:45 by mnishimo         ###   ########.fr       */
+/*   Updated: 2019/02/26 23:16:17 by mnishimo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef FT_LS_H
 # define FT_LS_H
 
+# include "lscolors.h"
 # include <sys/types.h>
 # include <sys/ioctl.h>
 # include <sys/stat.h>
@@ -51,6 +52,7 @@ typedef struct	s_lsflags
 	char			f;
 	char			d;
 	char			u;
+	char			cg;
 	char			n1;
 	char			rflag;
 }				t_lsflags;
@@ -59,6 +61,7 @@ typedef struct	s_file
 {
 	char		*d_name;
 	struct stat	stat;
+	char		free;
 }				t_file;
 
 int				manage_path(char *path, t_lsflags *flags, char c);
@@ -73,7 +76,7 @@ t_list			*duplicate_dir(t_list **dirs, t_list **files);
 t_list			*separate_dir(t_list **dirs, t_list **files, char *path);
 void			prcs_dirs(char *path, t_list **dir, t_lsflags *flags);
 int				prcs_first_dir(t_list **path, t_lsflags *flags);
-void			get_sym_dir(t_list **dirs);
+void			get_sym_dir(t_list *lst);
 
 void			prcs_files(t_list **dir, t_lsflags *flags, t_fmt *fmt);
 int				get_output(char *path, t_list **files, t_lsflags *flags);
@@ -125,4 +128,6 @@ void			ft_chardel(void *ptr, size_t size);
 t_list			**re_list(t_list **path, t_fmt *fmt, t_lsflags *flags);
 void			refmt_newel(t_list *cur, t_list **tmp,
 					t_list **last, t_lsflags *flags);
+
+char			*get_lsclr(mode_t mode);
 #endif

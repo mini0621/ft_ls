@@ -6,7 +6,7 @@
 /*   By: mnishimo <mnishimo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/31 18:43:47 by mnishimo          #+#    #+#             */
-/*   Updated: 2019/02/23 03:37:31 by mnishimo         ###   ########.fr       */
+/*   Updated: 2019/02/26 23:35:17 by mnishimo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,8 +29,13 @@ void	ft_chardel(void *ptr, size_t size)
 
 void	refmt_newel(t_list *cur, t_list **tmp, t_list **last, t_lsflags *flags)
 {
-	get_newfile(tmp, last, (char *)(cur->content),
+	t_list	*newlst;
+
+	newlst = get_newfile(tmp, last, (char *)(cur->content),
 			(char *)(cur->content));
+	if (flags->l != 'l' && flags->d != 'd'
+	&& get_type(((t_file *)(newlst->content))->stat.st_mode) == 'l')
+		get_sym_dir(newlst);
 	if (flags->n1 != '1' && flags->l != 'l')
 		get_fmt_name((char *)cur->content, flags->fmt);
 	if (flags->l == 'l')

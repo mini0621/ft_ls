@@ -6,7 +6,7 @@
 /*   By: mnishimo <mnishimo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/01 18:20:25 by mnishimo          #+#    #+#             */
-/*   Updated: 2019/02/23 02:44:59 by mnishimo         ###   ########.fr       */
+/*   Updated: 2019/02/26 20:35:09 by mnishimo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,7 @@ void	fmt_reg(char *path, char *d_name, struct stat *stat, t_lsflags *flags)
 		t = fmt_time(&(stat->st_mtime));
 	ft_printf("%s ", t);
 	free(t);
-	ft_printf("%s", d_name);
+	ft_printf("%s%s%s", get_lsclr(stat->st_mode), d_name, CDEF);
 	fmt_lnk(tpath, stat);
 	ft_strdel(&tpath);
 }

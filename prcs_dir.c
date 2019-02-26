@@ -6,7 +6,7 @@
 /*   By: mnishimo <mnishimo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/02 17:27:39 by mnishimo          #+#    #+#             */
-/*   Updated: 2019/02/23 03:39:36 by mnishimo         ###   ########.fr       */
+/*   Updated: 2019/02/26 23:34:41 by mnishimo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,32 +31,29 @@ void	prcs_dirs(char *path, t_list **dir, t_lsflags *flags)
 	}
 }
 
-void	get_sym_dir(t_list **dirs)
+void	get_sym_dir(t_list *lst)
 {
-	t_list		*cur;
 	char		*buff;
 	ssize_t		buff_size;
 	struct stat	*stat;
 	struct stat	tmp;
 
-	if (dirs == NULL || *dirs == NULL)
+	if (lst == NULL)
 		return ;
-	cur = *dirs;
-	while (cur)
+	stat = &(((t_file *)(lst->content))->stat);
+	buff_size = stat->st_size + 1;
+	if ((buff = ft_strnew(buff_size)) == NULL)
+		return ;
+	readlink(((t_file *)(lst->content))->d_name, buff, buff_size);
+	lstat(buff, &tmp);
+	if (get_type(tmp.st_mode) == 'd')
 	{
-		stat = &(((t_file *)(cur->content))->stat);
-		buff_size = stat->st_size + 1;
-		if ((stat->st_mode & S_IFMT) == S_IFLNK
-			&& (buff = ft_strnew(buff_size)) != NULL)
-		{
-			readlink(((t_file *)(cur->content))->d_name, buff, buff_size);
-			lstat(buff, &tmp);
-			if ((tmp.st_mode & S_IFMT) == S_IFDIR)
-				ft_memcpy(stat, &tmp, sizeof(struct stat));
-			free(buff);
-		}
-		cur = cur->next;
+		free(((t_file *)(lst->content))->d_name);
+		((t_file *)(lst->content))->d_name = buff;
+		ft_memcpy(stat, &tmp, sizeof(struct stat));
 	}
+	else
+		free(buff);
 }
 
 int		prcs_first_dir(t_list **path, t_lsflags *flags)
@@ -77,7 +74,7 @@ int		prcs_first_dir(t_list **path, t_lsflags *flags)
 	}
 	if (flags->d == 'd' && *path == NULL)
 	{
-		ft_printf(".\n");
+		ft_printf("%s.%s\n", CDIR, CDEF);
 		return (0);
 	}
 	sort_files(re_list(path, &fmt, flags), flags);

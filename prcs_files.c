@@ -6,7 +6,7 @@
 /*   By: mnishimo <mnishimo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/11 18:41:03 by mnishimo          #+#    #+#             */
-/*   Updated: 2019/02/23 03:47:46 by mnishimo         ###   ########.fr       */
+/*   Updated: 2019/02/26 23:13:45 by mnishimo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,6 @@ int		output_arg_files(t_list **path, t_lsflags *flags)
 	t_list		*dir;
 
 	dir = NULL;
-	get_sym_dir(path);
 	if (flags->d != 'd')
 		separate_dir(&dir, path, NULL);
 	if (*path == NULL)
@@ -60,7 +59,8 @@ void	print_files_simple(t_list **files, t_lsflags *flags)
 	{
 		while (cur)
 		{
-			ft_printf("%s\n", ((t_file *)(cur->content))->d_name);
+			ft_printf("%s%s%s\n", get_lsclr(((t_file *)(cur->content))->
+			stat.st_mode), ((t_file *)(cur->content))->d_name, CDEF);
 			cur = cur->next;
 		}
 	}
@@ -68,8 +68,9 @@ void	print_files_simple(t_list **files, t_lsflags *flags)
 	{
 		while (cur)
 		{
-			ft_printf("%-*s", flags->fmt->name,
-			((t_file *)(cur->content))->d_name);
+			ft_printf("%s%-*s%s", get_lsclr(((t_file *)(cur->content))->
+			stat.st_mode), flags->fmt->name, ((t_file *)(cur->content))->
+			d_name, CDEF);
 			cur = cur->next;
 		}
 		ft_printf("\n");
@@ -98,7 +99,8 @@ void	prcs_files(t_list **files, t_lsflags *flags, t_fmt *fmt)
 			ft_printf("\n");
 		}
 		if (i % fmt->row == mod - 1)
-			ft_printf("%-*s", fmt->name, ((t_file *)(cur->content))->d_name);
+			ft_printf("%s%-*s%s", get_lsclr(((t_file *)(cur->content))->
+			stat.st_mode), fmt->name, ((t_file *)(cur->content))->d_name, CDEF);
 		cur = cur->next;
 		i++;
 	}
